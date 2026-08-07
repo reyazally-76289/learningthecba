@@ -84,7 +84,7 @@
                 <a href="#validator-section" class="hover:text-brand-blue transition-colors">Rule Validator</a>
                 <a href="#resources-section" class="hover:text-brand-blue transition-colors">CBA Sources</a>
                 <span class="text-slate-300">|</span>
-                <span class="text-[12px] bg-slate-100 text-brand-textDark px-2.5 py-1 rounded-md font-mono font-bold select-none">Community Hub v4.2</span>
+                <span class="text-[12px] bg-slate-100 text-brand-textDark px-2.5 py-1 rounded-md font-mono font-bold select-none">Community Hub v4.3</span>
             </nav>
         </div>
     </header>
@@ -165,7 +165,7 @@
                     <input 
                         type="text" 
                         id="cba-search-input" 
-                        placeholder="Search CBA rules (e.g., 'In-season tournament prize', 'Workers compensation', 'Legacy Fund')..." 
+                        placeholder="Search CBA rules (e.g., 'Missed practice fine', 'Public trade request', 'Firearms ban', 'Gaming equity')..." 
                         class="w-full bg-slate-50 border-2 border-slate-200 rounded-2xl py-5 pl-14 pr-36 text-brand-textDark placeholder-brand-textMuted font-medium text-base focus:outline-none focus:border-brand-blue focus:bg-white transition-all shadow-sm"
                         oninput="handleSearchInput()"
                         onkeydown="if(event.key === 'Enter') { event.preventDefault(); runActiveQuery(); }"
@@ -853,6 +853,52 @@
                 `
             },
             {
+                id: "moving-expenses-definition",
+                article: "Article III",
+                primaryKeyword: "moving & housing reimbursements",
+                keywords: ["moving expenses", "relocation", "housing costs", "housing reimbursement", "hotel accommodations", "hotel stays", "lease obligation", "minimize liability", "$6000", "46 days"],
+                question: "What relocation benefits must a team pay when a player is traded?",
+                citation: "CBA Article III, Section 1",
+                answer: `
+                    <p>When a player's contract is assigned from one team to another via a trade, the assignee (receiving) team is legally obligated to reimburse the player for specified, verified moving and temporary housing costs:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>Moving Expenses (Sec 1a):</strong> The team must pay for "reasonable" actual expenses incurred in moving to the new home territory. This includes moving not more than **one (1) automobile** (or up to **two (2) automobiles if married**). To qualify, the player must consult the team in advance and furnish a written mover estimate within a reasonable time, giving the team 10 days to agree or make alternative arrangements.</li>
+                        <li><strong>Hotel Accommodations (Sec 1b):</strong> The team must pay for a road-comparable hotel room in the home city for up to **forty-six (46) days** following the assignment.</li>
+                        <li><strong>Housing Costs Reimbursement (Sec 1c):</strong> The team must reimburse the player's lease rent or mortgage expenses in the *former* city for up to **three (3) months** post-trade. This reimbursement is capped at **$6,000 per month** and is paid on a pro-rata basis if a full month is not involved. Satisfactory proof of payment and legal liability is required (Sec 1d).</li>
+                        <li><strong>Liability Mitigation (Sec 1e):</strong> To protect franchises, players without a permanent year-round local residence must use "best efforts" to obtain short-term leases, sublet allowances, or landlord agreements allowing the team to assume the lease upon a trade.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "meal-expenses-definition",
+                article: "Article III",
+                primaryKeyword: "meal allowances & road calculations",
+                keywords: ["meal expense", "meal allowance", "per diem", "road trips", "breakfast", "lunch", "dinner", "partial day", "home city", "travel expenses", "cpi", "75 miles"],
+                question: "How are player meal allowances and partial-day road trip expenses calculated?",
+                citation: "CBA Article III, Section 2",
+                answer: `
+                    <p>The daily meal allowance (per diem) covers players while "on the road" and features specific structural guidelines for adjustment and partial-day travel:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>Annual CPI Adjustment (Sec 2a):</strong> Began at **$156 per day** (2023-24). For subsequent seasons, this amount is adjusted by the percentage change in the national Consumer Price Index (CPI-U) from June 1 through May 31 immediately preceding the season, rounded to the nearest whole dollar.</li>
+                        <li><strong>Meal Splits:</strong> Daily per diems are mathematically distributed as follows:
+                            <ul class="list-none pl-4 mt-1 space-y-1 text-slate-600 font-mono text-[11px]">
+                                <li>• Breakfast = <strong>18%</strong> of daily allowance</li>
+                                <li>• Lunch = <strong>28%</strong> of daily allowance</li>
+                                <li>• Dinner = <strong>54%</strong> of daily allowance</li>
+                            </ul>
+                        </li>
+                        <li><strong>Partial-Day Road trip Deductions (Sec 2b):</strong> Allowance is docked based on team departure/arrival times:
+                            <ul class="list-none pl-4 mt-1 space-y-1">
+                                <li>• <em>No Breakfast</em> if departure is after 9:00 a.m. or arrival is before 7:00 a.m.</li>
+                                <li>• <em>No Lunch</em> if departure is after 1:00 p.m. or arrival is before 11:30 a.m.</li>
+                                <li>• <em>No Dinner</em> if departure is after 7:00 p.m. or arrival is before 5:30 p.m.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Home City Boundaries:</strong> Deemed to include the regular home court and any other venue played within **seventy-five (75) miles** of the team's primary facility.</li>
+                    </ul>
+                `
+            },
+            {
                 id: "pension-benefits-rules",
                 article: "Article IV",
                 primaryKeyword: "pension benefits",
@@ -1040,52 +1086,138 @@
                     </div>
                 `
             },
+            /* --- ARTICLE VI: PLAYER CONDUCT ADDITIONS --- */
             {
-                id: "moving-expenses-definition",
-                article: "Article III",
-                primaryKeyword: "moving & housing reimbursements",
-                keywords: ["moving expenses", "relocation", "housing costs", "housing reimbursement", "hotel accommodations", "hotel stays", "lease obligation", "minimize liability", "$6000", "46 days"],
-                question: "What relocation benefits must a team pay when a player is traded?",
-                citation: "CBA Article III, Section 1",
+                id: "missed-games-salary-deductions",
+                article: "Article VI",
+                primaryKeyword: "missed games salary deductions",
+                keywords: ["missed game", "salary deduction", "holdout", "suspension deduction", "1/91.6", "1/145", "1/110", "game fine", "pay loss", "unexcused absence"],
+                question: "How are base salary deductions calculated for missed games, holdouts, and suspensions?",
+                citation: "CBA Article VI, Section 1",
                 answer: `
-                    <p>When a player's contract is assigned from one team to another via a trade, the assignee (receiving) team is legally obligated to reimburse the player for specified, verified moving and temporary housing costs:</p>
-                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
-                        <li><strong>Moving Expenses (Sec 1a):</strong> The team must pay for "reasonable" actual expenses incurred in moving to the new home territory. This includes moving not more than **one (1) automobile** (or up to **two (2) automobiles if married**). To qualify, the player must consult the team in advance and furnish a written mover estimate within a reasonable time, giving the team 10 days to agree or make alternative arrangements.</li>
-                        <li><strong>Hotel Accommodations (Sec 1b):</strong> The team must pay for a road-comparable hotel room in the home city for up to **forty-six (46) days** following the assignment.</li>
-                        <li><strong>Housing Costs Reimbursement (Sec 1c):</strong> The team must reimburse the player's lease rent or mortgage expenses in the *former* city for up to **three (3) months** post-trade. This reimbursement is capped at **$6,000 per month** and is paid on a pro-rata basis if a full month is not involved. Satisfactory proof of payment and legal liability is required (Sec 1d).</li>
-                        <li><strong>Liability Mitigation (Sec 1e):</strong> To protect franchises, players without a permanent year-round local residence must use "best efforts" to obtain short-term leases, sublet allowances, or landlord agreements allowing the team to assume the lease upon a trade.</li>
+                    <p>When a player fails or refuses to play without proper cause, or is suspended, their Base Compensation is docked using exact CBA formulas:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-2 text-slate-700">
+                        <li><strong>Unexcused Failure / Holdout (Sec 1a(i)):</strong> Refusal to render services reduces base compensation by <strong>1/91.6th</strong> for each missed exhibition, regular season, play-in, or playoff game:
+                            <div class="bg-slate-100 p-2.5 rounded-lg my-1 font-mono text-xs text-brand-blue">
+                                $$\\text{Salary Deduction} = \\text{Base Compensation} \\times \\left(\\frac{1}{91.6}\\right) \\quad \\text{per game}$$
+                            </div>
+                        </li>
+                        <li><strong>Suspensions Under 20 Games (Sec 1a(ii)):</strong> Suspensions for reasons other than refusal to play reduce base pay by <strong>1/145th</strong> per game:
+                            <div class="bg-slate-100 p-2.5 rounded-lg my-1 font-mono text-xs text-brand-blue">
+                                $$\\text{Salary Deduction} = \\text{Base Compensation} \\times \\left(\\frac{1}{145}\\right) \\quad \\text{per game}$$
+                            </div>
+                        </li>
+                        <li><strong>Suspensions 20+ Games or Indefinite (Sec 1a(ii)):</strong> Long-term suspensions reduce base pay by <strong>1/110th</strong> per game:
+                            <div class="bg-slate-100 p-2.5 rounded-lg my-1 font-mono text-xs text-brand-blue">
+                                $$\\text{Salary Deduction} = \\text{Base Compensation} \\times \\left(\\frac{1}{110}\\right) \\quad \\text{per game}$$
+                            </div>
+                        </li>
+                        <li><strong>1-Game On-Court Suspensions (Sec 1b):</strong> For the first 1-game on-court suspension of a season, the deduction equals:
+                            <div class="bg-slate-100 p-2.5 rounded-lg my-1 font-mono text-xs text-brand-blue">
+                                $$\\text{Deduction} = \\text{Base Compensation} \\times \\left(\\frac{1}{\\text{Days in Regular Season}}\\right)$$
+                            </div>
+                        </li>
+                        <li><strong>Free Agent Suspensions (Sec 1c):</strong> Unserved games carry over to free agency and are deemed served at a 1.5x multiplier relative to games played by their former team before signing.</li>
                     </ul>
                 `
             },
             {
-                id: "meal-expenses-definition",
-                article: "Article III",
-                primaryKeyword: "meal allowances & road calculations",
-                keywords: ["meal expense", "meal allowance", "per diem", "road trips", "breakfast", "lunch", "dinner", "partial day", "home city", "travel expenses", "cpi", "75 miles"],
-                question: "How are player meal allowances and partial-day road trip expenses calculated?",
-                citation: "CBA Article III, Section 2",
+                id: "practice-and-mandatory-program-fines",
+                article: "Article VI",
+                primaryKeyword: "practice and mandatory program fines",
+                keywords: ["practice fine", "missed practice", "promotional appearance fine", "rookie transition program", "anti-gambling training", "media training", "business of basketball", "fines"],
+                question: "What are the baseline fines for missed practices, media sessions, and mandatory training programs?",
+                citation: "CBA Article VI, Sections 2-5",
                 answer: `
-                    <p>The daily meal allowance (per diem) covers players while "on the road" and features specific structural guidelines for adjustment and partial-day travel:</p>
-                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
-                        <li><strong>Annual CPI Adjustment (Sec 2a):</strong> Began at **$156 per day** (2023-24). For subsequent seasons, this amount is adjusted by the percentage change in the national Consumer Price Index (CPI-U) from June 1 through May 31 immediately preceding the season, rounded to the nearest whole dollar.</li>
-                        <li><strong>Meal Splits:</strong> Daily per diems are mathematically distributed as follows:
-                            <ul class="list-none pl-4 mt-1 space-y-1 text-slate-600 font-mono text-[11px]">
-                                <li>• Breakfast = <strong>18%</strong> of daily allowance</li>
-                                <li>• Lunch = <strong>28%</strong> of daily allowance</li>
-                                <li>• Dinner = <strong>54%</strong> of daily allowance</li>
+                    <p>Section 2 through 5 establishes explicit dollar fines for missing mandatory team and league obligations without reasonable cause:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5 text-slate-700">
+                        <li><strong>Missed Practices (Sec 2a):</strong>
+                            <ul class="list-none pl-4 space-y-0.5 text-xs">
+                                <li>• 1st Missed Practice: <strong>$2,500 fine</strong></li>
+                                <li>• 2nd Missed Practice: <strong>$5,000 fine</strong></li>
+                                <li>• 3rd Missed Practice: <strong>$7,500 fine</strong></li>
+                                <li>• 4th+ Missed Practice: Subject to reasonable additional team discipline.</li>
                             </ul>
                         </li>
-                        <li><strong>Partial-Day Road trip Deductions (Sec 2b):</strong> Allowance is docked based on team departure/arrival times:
-                            <ul class="list-none pl-4 mt-1 space-y-1">
-                                <li>• <em>No Breakfast</em> if departure is after 9:00 a.m. or arrival is before 7:00 a.m.</li>
-                                <li>• <em>No Lunch</em> if departure is after 1:00 p.m. or arrival is before 11:30 a.m.</li>
-                                <li>• <em>No Dinner</em> if departure is after 7:00 p.m. or arrival is before 5:30 p.m.</li>
+                        <li><strong>Promotional Appearances (Sec 3):</strong> Unexcused absence from required promotional events = <strong>$20,000 fine</strong>.</li>
+                        <li><strong>Mandatory Educational Programs (Sec 4b):</strong>
+                            <ul class="list-none pl-4 space-y-0.5 text-xs">
+                                <li>• Missing Rookie Transition Program (RTP): <strong>5-Game Suspension</strong>.</li>
+                                <li>• Missing Team Awareness Meetings / Life Skills: <strong>$20,000 fine</strong>.</li>
                             </ul>
                         </li>
-                        <li><strong>Home City Boundaries:</strong> Deemed to include the regular home court and any other venue played within **seventy-five (75) miles** of the team's primary facility.</li>
+                        <li><strong>Media, Business & Anti-Gambling Training (Sec 5):</strong>
+                            <ul class="list-none pl-4 space-y-0.5 text-xs">
+                                <li>• Missing Media Training: <strong>$20,000 fine</strong>.</li>
+                                <li>• Missing Business of Basketball Program: <strong>$5,000 fine</strong> (Team Governors are also required to attend).</li>
+                                <li>• Missing Anti-Gambling Training Session: <strong>$100,000 fine</strong>.</li>
+                            </ul>
+                        </li>
                     </ul>
                 `
             },
+            {
+                id: "off-court-conduct-and-firearms-rules",
+                article: "Article VI",
+                primaryKeyword: "off-court conduct and firearms rules",
+                keywords: ["firearms", "weapons", "guns", "unlawful violence", "felony conviction", "counseling", "driver license", "motor vehicle", "one penalty", "investigations", "charity fine split"],
+                question: "What are the rules regarding firearms, off-court violence, and team vs league discipline?",
+                citation: "CBA Article VI, Sections 6-14",
+                answer: `
+                    <p>Sections 6 through 14 outline strict off-court safety standards, weapon bans, and disciplinary procedures:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5 text-slate-700">
+                        <li><strong>Firearms & Deadly Weapons Ban (Sec 9):</strong> Possessing a firearm or deadly weapon of any kind at any NBA or team venue, practice facility, office, or while traveling on NBA-related business is strictly prohibited. Annual proof of valid firearm licensing and registration is mandatory.</li>
+                        <li><strong>Unlawful Violence Conviction (Sec 7):</strong> Conviction (or guilty/no-contest plea) for a violent felony results in an <strong>immediate minimum 10-game suspension</strong>.</li>
+                        <li><strong>Clinical Counseling (Sec 8):</strong> Players involved in violent conduct may be required to undergo clinical evaluation and up to 10 counseling sessions. Refusing or failing to attend within 72 hours of notice triggers a <strong>$10,000 per day fine</strong>.</li>
+                        <li><strong>The 'One Penalty' Rule (Sec 10):</strong> The NBA and a team cannot discipline a player for the same act. League disciplinary action supersedes team action. The NBA has 48 hours to rescind or prohibit team discipline to assume control.</li>
+                        <li><strong>Charitable Fine Remittance (Sec 6):</strong> 50% of collected fine money is remitted to the NBPA Foundation (or an approved 501(c)(3) charity) and 50% to an NBA-selected charity.</li>
+                        <li><strong>Motor Vehicle Compliance (Sec 14):</strong> Players must provide proof of a valid driver's license, vehicle registration, and insurance annually.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "public-trade-requests",
+                article: "Article VI",
+                primaryKeyword: "public trade requests",
+                keywords: ["trade request", "public trade demand", "demand trade", "trade fine", "$150,000", "trade suspension", "trade representative"],
+                question: "What are the penalties for publicly expressing a desire to be traded?",
+                citation: "CBA Article VI, Section 18",
+                answer: `
+                    <p>Under <strong>Article VI, Section 18</strong>, players and their representatives are explicitly restricted from making trade demands in public forums:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5 text-slate-700">
+                        <li><strong>The Prohibition:</strong> Any player (or player representative acting with authority) who publicly expresses a desire to be traded to another team is subject to league discipline.</li>
+                        <li><strong>Maximum Fine Ceiling:</strong> The maximum fine that can be imposed by the NBA for a public trade demand is <strong>$150,000</strong>, along with potential suspension.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "gaming-and-cannabis-investments",
+                article: "Article VI",
+                primaryKeyword: "gaming and cannabis investments",
+                keywords: ["gaming company", "sports betting", "fantasy sports", "cannabis", "cbd", "marijuana", "gambling equity", "1% limit", "endorsement"],
+                question: "What are the rules for player involvement with sports gaming and cannabis companies?",
+                citation: "CBA Article VI, Sections 19-20",
+                answer: `
+                    <p>Sections 19 and 20 outline clear commercial parameters for player investments and endorsements in sports betting, fantasy, and cannabis businesses:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5 text-slate-700">
+                        <li><strong>Sports Betting & Gaming Companies (Sec 19):</strong>
+                            <ul class="list-none pl-4 space-y-0.5 text-xs">
+                                <li>• <strong>Passive Equity Cap:</strong> Players may hold passive ownership under <strong>1%</strong> in entities facilitating NBA-related bets, and under 50% in entities offering non-NBA wagering.</li>
+                                <li>• <strong>Disclosures:</strong> Ownership must be disclosed to the League Office within 30 days.</li>
+                                <li>• <strong>No NBA Betting Promotion:</strong> Players can endorse general sports betting brands or non-NBA wagering, but are strictly barred from endorsing NBA-related bets or contests. Compensation cannot be tied to betting handle.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Cannabis & CBD Companies (Sec 20):</strong>
+                            <ul class="list-none pl-4 space-y-0.5 text-xs">
+                                <li>• <strong>CBD Products (THC ≤ 0.3%):</strong> Players can hold direct/indirect ownership and endorse CBD products provided the company doesn't sell Schedule I/II controlled substances.</li>
+                                <li>• <strong>Marijuana Companies:</strong> Players may hold passive ownership under 50%, but <strong>cannot endorse</strong> marijuana products without written approval from both the NBA and NBPA.</li>
+                                <li>• <strong>Venue Prohibition:</strong> Marijuana use remains prohibited at team or league facilities and venues.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                `
+            },
+            /* --- END ARTICLE VI ADDITIONS --- */
             {
                 id: "poison-pill",
                 article: "Article VII",
@@ -1361,8 +1493,9 @@
                 { id: "Article II", title: "Article II: Roster Regulations, UPC, & Exhibits", desc: "Contract amendments, allowable guarantees, Exhibit 9 & 10 rules." },
                 { id: "Article III", title: "Article III: Player Expenses & Relocations", desc: "Moving expenses, lodging (46 days), housing rent caps ($6,000/mo), and meal per diems." },
                 { id: "Article IV", title: "Article IV: Player Benefits & Pensions", desc: "Pension systems, early retirement age metrics, IST prize rules, and Two-Way credentials." },
+                { id: "Article VI", title: "Article VI: Player Conduct & Discipline", desc: "Practice fines, missed game salary deductions, firearms bans, public trade requests, gaming/cannabis." },
                 { id: "Article VII", title: "Article VII: Salary Cap & Exception Allocations", desc: "Mid-level exceptions, bird rights, aprons, and matching criteria." },
-                { id: "Article X", title: "Article X: Player Draft & Trade Limits", desc: "Draft draft selections, eligibility, and the Stepien pick rule." }
+                { id: "Article X", title: "Article X: Player Draft & Trade Limits", desc: "Draft selections, eligibility, and the Stepien pick rule." }
             ];
 
             articles.forEach(art => {
@@ -1510,14 +1643,14 @@
             const chipsData = QUESTION_DATABASE.filter(item => !item.id.endsWith("-definition") && !item.id.endsWith("-way-definition"));
 
             // Auto-append key chips
-            const pensionChip = QUESTION_DATABASE.find(item => item.id === "pension-benefits-rules");
-            if (pensionChip && !chipsData.includes(pensionChip)) {
-                chipsData.unshift(pensionChip);
+            const tradeReqChip = QUESTION_DATABASE.find(item => item.id === "public-trade-requests");
+            if (tradeReqChip && !chipsData.includes(tradeReqChip)) {
+                chipsData.unshift(tradeReqChip);
             }
 
-            const istChip = QUESTION_DATABASE.find(item => item.id === "in-season-tournament-prize-rules");
-            if (istChip && !chipsData.includes(istChip)) {
-                chipsData.unshift(istChip);
+            const missedGameChip = QUESTION_DATABASE.find(item => item.id === "missed-games-salary-deductions");
+            if (missedGameChip && !chipsData.includes(missedGameChip)) {
+                chipsData.unshift(missedGameChip);
             }
 
             chipsData.forEach(item => {
@@ -1577,7 +1710,7 @@
                 const fallbackItem = {
                     question: `Search: "${inputVal}"`,
                     citation: "CBA DIRECTORY RESOURCES",
-                    answer: `<p class="text-sm text-slate-600 leading-relaxed">The term <strong>'${inputVal}'</strong> doesn't directly register as a standard glossary item in our indexes. Try searching for terms like <strong>In-Season Tournament</strong>, <strong>moving expenses</strong>, <strong>meal allowances</strong>, <strong>Exhibit 10</strong>, <strong>guarantee voids</strong>, or <strong>Gilbert Arenas</strong>.</p>`
+                    answer: `<p class="text-sm text-slate-600 leading-relaxed">The term <strong>'${inputVal}'</strong> doesn't directly register as a standard glossary item in our indexes. Try searching for terms like <strong>missed practice fine</strong>, <strong>public trade request</strong>, <strong>firearms</strong>, <strong>sports betting equity</strong>, <strong>1/91.6 salary deduction</strong>, or <strong>cannabis endorsement</strong>.</p>`
                 };
                 simulateCompute(fallbackItem);
             }
@@ -1598,7 +1731,7 @@
             const loadingStates = [
                 "Analyzing user inquiry context...",
                 "Scanning 2026-27 CBA documentation database...",
-                "Retrieving verified Article III, IV, and VII citations...",
+                "Retrieving verified Article III, IV, VI, and VII citations...",
                 "Formulating user-friendly response structure..."
             ];
 
