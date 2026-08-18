@@ -3,247 +3,1797 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Learning The CBA | Interactive NBA Salary Cap Guide</title>
+    <title>Learning the CBA | Interactive NBA Salary Cap & Trade Rule Guide</title>
+    
+    <!-- Tailwind CSS for high-fidelity responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Material Icons for crisp navigation and indicators -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
+    <!-- Premium font pairing (Inter) for clean, high-contrast typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- KaTeX for high-fidelity rendering of LaTeX math syntax -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, { delimiters: [{ left: '$$', right: '$$', display: true }] });"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            blue: '#1E40AF',
+                            blueHover: '#1D4ED8',
+                            lightBg: '#F8FAFC',
+                            cardBg: '#FFFFFF',
+                            border: '#E2E8F0',
+                            textDark: '#0F172A',
+                            textMuted: '#64748B',
+                            accent: '#0EA5E9'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --accent-blue: #38bdf8;
-            --accent-red: #f43f5e;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border: #334155;
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
+            font-family: 'Inter', sans-serif;
+            background-color: #F8FAFC;
+            color: #0F172A;
         }
-
-        .container {
-            max-width: 900px;
-            width: 100%;
+        /* Premium minimalistic scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 6px;
         }
-
-        header {
-            text-align: center;
-            margin-bottom: 30px;
+        ::-webkit-scrollbar-track {
+            background: #F1F5F9;
         }
-
-        h1 {
-            color: var(--accent-blue);
-            margin-bottom: 5px;
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 3px;
         }
-
-        p.subtitle {
-            color: var(--text-muted);
-            margin-top: 0;
-        }
-
-        .search-box {
-            width: 100%;
-            padding: 14px 18px;
-            font-size: 16px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            background-color: var(--card-bg);
-            color: var(--text-main);
-            box-sizing: border-box;
-            margin-bottom: 25px;
-        }
-
-        .search-box:focus {
-            outline: 2px solid var(--accent-blue);
-        }
-
-        .thresholds-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 15px;
-            text-align: center;
-        }
-
-        .stat-card h4 {
-            margin: 0;
-            color: var(--text-muted);
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .stat-card .amount {
-            font-size: 22px;
-            font-weight: bold;
-            color: var(--accent-blue);
-            margin: 8px 0 0 0;
-        }
-
-        .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .card h2 {
-            margin-top: 0;
-            color: var(--accent-blue);
-            font-size: 20px;
-        }
-
-        .badge {
-            display: inline-block;
-            background: var(--accent-red);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: bold;
-            margin-left: 8px;
-            vertical-align: middle;
-        }
-
-        ul {
-            padding-left: 20px;
-            color: var(--text-main);
-            line-height: 1.6;
-        }
-
-        li {
-            margin-bottom: 8px;
-        }
-
-        .rule-tag {
-            font-size: 12px;
-            color: var(--accent-blue);
-            font-weight: bold;
-        }
-
-        .hidden {
-            display: none !important;
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8;
         }
     </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col justify-between antialiased selection:bg-blue-100 selection:text-brand-blue">
 
-<div class="container">
-    <header>
-        <h1>Learning The CBA</h1>
-        <p class="subtitle">Interactive NBA Salary Cap & Conduct Rule Guide (2026–27)</p>
+    <header class="border-b border-brand-border bg-white/90 backdrop-blur-md sticky top-0 z-50 px-4 py-4 sm:px-8 shadow-sm">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-brand-blue text-white p-2.5 rounded-xl flex items-center justify-center shadow-md">
+                    <span class="material-icons text-xl">menu_book</span>
+                </div>
+                <div>
+                    <h1 class="text-xl font-black tracking-tight text-brand-textDark flex items-center gap-1.5">
+                        LEARNING THE <span class="text-brand-blue">CBA</span>
+                    </h1>
+                    <div class="flex items-center gap-1.5">
+                        <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <p class="text-[10px] text-brand-textMuted uppercase tracking-wider font-extrabold">2026-27 Cap Directory</p>
+                    </div>
+                </div>
+            </div>
+            <nav class="flex items-center gap-6 text-sm font-semibold text-brand-textMuted">
+                <a href="#qa-section" class="hover:text-brand-blue transition-colors">Rule Finder</a>
+                <a href="#validator-section" class="hover:text-brand-blue transition-colors">Rule Validator</a>
+                <a href="#resources-section" class="hover:text-brand-blue transition-colors">CBA Sources</a>
+                <span class="text-slate-300">|</span>
+                <span class="text-[12px] bg-slate-100 text-brand-textDark px-2.5 py-1 rounded-md font-mono font-bold select-none">Community Hub v4.3</span>
+            </nav>
+        </div>
     </header>
 
-    <input type="text" id="searchInput" class="search-box" placeholder="Search rules, gun, locker room, aprons, exceptions, draft pick trades..." onkeyup="filterRules()">
-
-    <!-- Key Cap Numbers -->
-    <div class="thresholds-grid">
-        <div class="stat-card">
-            <h4>Salary Cap</h4>
-            <div class="amount">$164.96M</div>
-        </div>
-        <div class="stat-card">
-            <h4>Luxury Tax Level</h4>
-            <div class="amount">$200.43M</div>
-        </div>
-        <div class="stat-card">
-            <h4>1st Apron</h4>
-            <div class="amount">$209.02M</div>
-        </div>
-        <div class="stat-card">
-            <h4>2nd Apron</h4>
-            <div class="amount" style="color: var(--accent-red);">$221.69M</div>
-        </div>
-    </div>
-
-    <!-- Rules Cards -->
-    <div id="rulesContainer">
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-8 sm:px-8 space-y-12">
         
-        <!-- Firearms & Locker Room Policy -->
-        <div class="card rule-item" data-keywords="gun firearm weapon locker room facility arena travel concealed pistol possession deadly weapons article vi article 35 gun policy guns">
-            <h2>Firearms & Weapons Violation (Article VI, Sec. 9) <span class="badge">STRICT BAN</span></h2>
-            <p>Possessing a firearm or deadly weapon inside any team or league facility is strictly prohibited:</p>
-            <ul>
-                <li><strong>Locker Room & Facility Ban:</strong> No player may possess a firearm or deadly weapon whenever physically present at a facility/venue owned, operated, or used by a Team or the NBA (including locker rooms, practice facilities, arenas, team offices, or while traveling on team business).</li>
-                <li><strong>Conduct Prejudicial to League:</strong> Any breach is classified as conduct prejudicial to the NBA under Article 35(d) of the NBA Constitution.</li>
-                <li><strong>Disciplinary Penalties:</strong> Triggers immediate disciplinary action by the Commissioner, including multi-game or indefinite suspensions without pay, substantial fines, and potential contract termination depending on severity.</li>
-                <li><strong>Mandatory Annual Registration:</strong> Players owning licensed firearms must provide proof of legal registration and state licensing to the team annually.</li>
-            </ul>
-        </div>
+        <!-- Welcome & Quick Threshold Tracker -->
+        <section class="bg-gradient-to-r from-blue-50 via-sky-50 to-white border border-blue-100 rounded-3xl p-6 sm:p-8 shadow-sm relative overflow-hidden">
+            <div class="absolute -right-16 -top-16 w-48 h-48 rounded-full bg-sky-200/20 blur-3xl pointer-events-none"></div>
+            <div class="max-w-3xl space-y-3 relative z-10">
+                <div class="inline-flex items-center gap-2 bg-brand-blue text-white px-3 py-1 rounded-full text-[10px] font-extrabold tracking-widest uppercase">
+                    CBA Educational Directory
+                </div>
+                <h2 class="text-3xl sm:text-4xl font-black tracking-tight text-brand-textDark leading-tight">
+                    Welcome to <span class="text-brand-blue">LearningTheCBA.com</span>
+                </h2>
+                <p class="text-sm text-brand-textMuted leading-relaxed max-w-2xl">
+                    Our platform is an independent, community-driven resource designed to break down the highly complex Collective Bargaining Agreement into digestible, rule-citing answers.
+                </p>
+                
+                <!-- Quick stats ribbon -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4">
+                    <div class="bg-white border border-slate-100 p-3.5 rounded-xl shadow-sm">
+                        <span class="text-[10px] uppercase font-bold tracking-wider text-brand-textMuted block">Salary Cap</span>
+                        <span class="text-lg font-black text-brand-blue font-mono">$164.961M</span>
+                    </div>
+                    <div class="bg-white border border-slate-100 p-3.5 rounded-xl shadow-sm">
+                        <span class="text-[10px] uppercase font-bold tracking-wider text-brand-textMuted block">Tax Threshold</span>
+                        <span class="text-lg font-black text-slate-800 font-mono">$200.428M</span>
+                    </div>
+                    <div class="bg-white border border-slate-100 p-3.5 rounded-xl shadow-sm">
+                        <span class="text-[10px] uppercase font-bold tracking-wider text-brand-textMuted block">First Apron</span>
+                        <span class="text-lg font-black text-amber-600 font-mono">$209.015M</span>
+                    </div>
+                    <div class="bg-white border border-slate-100 p-3.5 rounded-xl shadow-sm">
+                        <span class="text-[10px] uppercase font-bold tracking-wider text-brand-textMuted block">Second Apron</span>
+                        <span class="text-lg font-black text-rose-600 font-mono">$221.686M</span>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        <div class="card rule-item" data-keywords="first apron 1st apron sign and trade trade exception mid-level">
-            <h2>First Apron Restrictions ($209.02M)</h2>
-            <p>Crossing the 1st Apron hard-caps a team and triggers immediate roster restrictions:</p>
-            <ul>
-                <li><strong>No Sign-and-Trades:</strong> Teams cannot acquire a player via Sign-and-Trade if it keeps them above the 1st Apron.</li>
-                <li><strong>Salary Matching Limit:</strong> Teams cannot take back more money in a trade than they send out (100% matching cap).</li>
-                <li><strong>Buyout Market:</strong> Cannot sign players bought out during the regular season if their pre-buyout salary exceeded the Non-Taxpayer MLE ($15.04M).</li>
-                <li><strong>No BAE:</strong> Access to the Bi-Annual Exception ($5.48M) is completely eliminated.</li>
-            </ul>
-        </div>
+        <!-- Primary Feature Q&A and Folders -->
+        <section id="qa-section" class="bg-white border border-brand-border rounded-3xl p-6 sm:p-8 space-y-6 shadow-sm">
+            <div class="space-y-2">
+                <h3 class="text-2xl sm:text-3xl font-black text-brand-textDark tracking-tight">
+                    CBA Q&A Rule Finder & Article Directory
+                </h3>
+                <p class="text-brand-textMuted text-sm max-w-2xl leading-relaxed">
+                    Type a question below, or switch tabs to browse the categorized folder system representing the CBA Articles.
+                </p>
+            </div>
 
-        <div class="card rule-item" data-keywords="second apron 2nd apron aggregation cash frozen pick frozen draft pick">
-            <h2>Second Apron Penalties ($221.69M) <span class="badge">MAX RESTRICTION</span></h2>
-            <p>Exceeding the 2nd Apron applies the strictest team-building penalties in modern NBA history:</p>
-            <ul>
-                <li><strong>No Aggregating Salaries:</strong> Teams cannot combine 2 or more player salaries to trade for a single higher-salaried player.</li>
-                <li><strong>No Cash in Trades:</strong> Teams cannot send or receive cash considerations in any trade transaction.</li>
-                <li><strong>No Mid-Level Exception:</strong> Access to all Mid-Level Exceptions (MLE) is lost. Teams can only offer Veteran Minimum contracts.</li>
-                <li><strong>Frozen 1st-Round Draft Picks:</strong> First-round pick 7 years out is frozen (cannot be traded). If a team stays in the 2nd apron 2 out of 4 years, that pick drops to the 30th overall pick automatically.</li>
-            </ul>
-        </div>
+            <!-- Interactive Tab Navigation -->
+            <div class="flex border-b border-slate-100 gap-2">
+                <button 
+                    id="tab-search-btn" 
+                    onclick="switchQATab('search')" 
+                    class="py-3 px-4 text-xs sm:text-sm font-bold text-brand-blue border-b-2 border-brand-blue -mb-px transition-all flex items-center gap-1.5"
+                >
+                    <span class="material-icons text-base">forum</span>
+                    Ask the Oracle
+                </button>
+                <button 
+                    id="tab-glossary-btn" 
+                    onclick="switchQATab('glossary')" 
+                    class="py-3 px-4 text-xs sm:text-sm font-semibold text-brand-textMuted border-b-2 border-transparent -mb-px hover:text-brand-textDark transition-all flex items-center gap-1.5"
+                >
+                    <span class="material-icons text-base">folder_open</span>
+                    CBA Articles (Paraphrased)
+                </button>
+            </div>
 
-        <div class="card rule-item" data-keywords="draft picks stepien rule consecutive years trades seven year rule">
-            <h2>Draft Pick Trade Rules</h2>
-            <p>Rules governing how GMs can trade future draft assets:</p>
-            <ul>
-                <li><span class="rule-tag">THE STEPIEN RULE:</span> A team cannot trade away its first-round pick in consecutive future drafts. (Teams must retain at least one 1st-round pick in every other future draft).</li>
-                <li><span class="rule-tag">SEVEN-YEAR RULE:</span> Teams can only trade draft picks up to 7 years in advance (e.g., in 2026, teams can trade picks up to 2033).</li>
-                <li><span class="rule-tag">PICK SWAPS:</span> Teams constrained by the Stepien Rule can still offer "Pick Swaps" to swap order with another team in consecutive years.</li>
-            </ul>
-        </div>
+            <!-- Search Interface Container -->
+            <div id="qa-search-interface" class="space-y-4">
+                <div class="relative">
+                    <span class="material-icons absolute left-5 top-1/2 -translate-y-1/2 text-brand-textMuted text-2xl">search</span>
+                    <input 
+                        type="text" 
+                        id="cba-search-input" 
+                        placeholder="Search CBA rules (e.g., 'Missed practice fine', 'Public trade request', 'Firearms ban', 'Gaming equity')..." 
+                        class="w-full bg-slate-50 border-2 border-slate-200 rounded-2xl py-5 pl-14 pr-36 text-brand-textDark placeholder-brand-textMuted font-medium text-base focus:outline-none focus:border-brand-blue focus:bg-white transition-all shadow-sm"
+                        oninput="handleSearchInput()"
+                        onkeydown="if(event.key === 'Enter') { event.preventDefault(); runActiveQuery(); }"
+                    >
+                    <button 
+                        onclick="runActiveQuery()" 
+                        class="absolute right-4 top-1/2 -translate-y-1/2 bg-brand-blue text-white px-6 py-3 rounded-xl text-sm font-bold hover:bg-brand-blueHover transition-all flex items-center gap-1.5 shadow-md"
+                    >
+                        <span>Find Rules</span>
+                        <span class="material-icons text-sm">arrow_forward</span>
+                    </button>
+                </div>
 
-        <div class="card rule-item" data-keywords="mid level exception mle non taxpayer taxpayer room exception">
-            <h2>Mid-Level Exceptions (2026–27)</h2>
-            <ul>
-                <li><strong>Non-Taxpayer MLE:</strong> $15.04M (Up to 4 years) — Hard caps team at 1st Apron.</li>
-                <li><strong>Taxpayer MLE:</strong> $6.06M (Up to 2 years) — Available to tax teams under 2nd Apron.</li>
-                <li><strong>Room Exception:</strong> $9.37M (Up to 3 years) — For teams below the salary cap.</li>
-            </ul>
-        </div>
+                <!-- Suggested / Spell Corrected Assistant Tray -->
+                <div id="spell-check-assistant" class="hidden flex items-center gap-2 bg-blue-50/50 border border-blue-100 rounded-xl p-3 text-xs text-brand-blue">
+                    <span class="material-icons text-sm">auto_fix_high</span>
+                    <span>Recognized topic: Did you mean to query <strong id="suggested-correction-term" class="underline cursor-pointer hover:text-brand-blueHover" onclick="applyCorrectionSuggestion()">Poison Pill</strong>? Click to load the verified CBA explanation.</span>
+                </div>
 
-    </div>
-</div>
+                <!-- Instant Question Helper Grid -->
+                <div class="space-y-2">
+                    <span class="text-[10px] font-extrabold text-brand-textMuted uppercase tracking-wider block">Or select an essential CBA subject to review:</span>
+                    <div class="flex flex-wrap gap-2.5" id="query-chips-tray">
+                        <!-- Instantiated by Javascript -->
+                    </div>
+                </div>
+            </div>
 
-<script>
-    function filterRules() {
-        const input = document.getElementById('searchInput').value.toLowerCase().trim();
-        const rules = document.getElementsByClassName('rule-item');
+            <!-- Interactive Glossary Container with Folder Directories -->
+            <div id="qa-glossary-interface" class="hidden space-y-6">
+                <div class="bg-slate-50 border border-slate-200/60 p-4 rounded-2xl flex items-start gap-3">
+                    <span class="material-icons text-brand-blue mt-0.5">folder_shared</span>
+                    <div class="space-y-1">
+                        <h4 class="text-xs font-bold text-brand-textDark uppercase tracking-wider">CBA Directory Folders</h4>
+                        <p class="text-xs text-brand-textMuted leading-relaxed">
+                            Click on any of the folders below to expand its paraphrased, educational list of Article codes. All legal descriptions are condensed into plain academic language for clarity.
+                        </p>
+                    </div>
+                </div>
 
-        for (let i = 0; i < rules.length; i++) {
-            const ruleText = rules[i].innerText.toLowerCase();
-            const keywords = rules[i].getAttribute('data-keywords') || '';
+                <!-- Dynamic Folder Directory Stack -->
+                <div class="space-y-4" id="glossary-folders-stack">
+                    <!-- Populated dynamically by Javascript -->
+                </div>
+            </div>
+
+            <!-- Active Q&A Output Board -->
+            <div id="qa-result-board" class="border border-brand-border rounded-2xl p-6 bg-slate-50/50 hidden space-y-4 transition-all duration-300">
+                <div class="flex items-center justify-between border-b border-brand-border pb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="inline-flex w-2.5 h-2.5 rounded-full bg-brand-blue"></span>
+                        <span class="text-xs font-black text-brand-blue uppercase tracking-wider font-mono" id="qa-citation-node">CBA CITATION: ARTICLE IV, SECTION 6</span>
+                    </div>
+                    <button onclick="clearQABoard()" class="text-brand-textMuted hover:text-brand-textDark flex items-center justify-center p-1 rounded-lg hover:bg-slate-100 transition-all">
+                        <span class="material-icons text-lg">close</span>
+                    </button>
+                </div>
+
+                <!-- Loading screen mockup -->
+                <div id="oracle-computing-loader" class="hidden flex items-center gap-3 py-6 text-brand-textMuted text-xs font-mono">
+                    <div class="w-4 h-4 border-2 border-brand-blue border-t-transparent rounded-full animate-spin"></div>
+                    <span id="oracle-computing-text">Scanning salary cap framework rules...</span>
+                </div>
+
+                <div id="oracle-actual-response-container" class="space-y-4">
+                    <h4 class="text-lg font-extrabold text-brand-textDark" id="qa-active-question-node">Active Query</h4>
+                    <div class="text-sm text-slate-700 leading-relaxed space-y-3" id="qa-active-answer-node">
+                        <!-- Dynamic output will go here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Core Rule Validator Widget -->
+        <section id="validator-section" class="space-y-6">
+            <div class="space-y-2">
+                <div class="flex items-center gap-2">
+                    <span class="material-icons text-brand-blue font-bold">gavel</span>
+                    <span class="text-xs font-bold text-brand-blue uppercase tracking-widest block">Core Tool</span>
+                </div>
+                <h3 class="text-2xl sm:text-3xl font-black text-brand-textDark tracking-tight">
+                    CBA Rule Validator
+                </h3>
+                <p class="text-brand-textMuted text-sm max-w-3xl">
+                    Match key transaction concepts against roster parameters. Select a salary cap tier and proposal below to evaluate compliance instantly.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+                <!-- Inputs Section (Left Side) -->
+                <div class="lg:col-span-7 bg-white border border-brand-border rounded-3xl p-6 sm:p-8 space-y-6 flex flex-col justify-between shadow-sm">
+                    <div class="space-y-6">
+                        <!-- Cap Tier Selection -->
+                        <div class="space-y-3">
+                            <label class="text-xs font-extrabold text-brand-textDark uppercase tracking-wider block">1. Select Target Team Cap Status</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5" id="cap-status-options-grid">
+                                <!-- Populated dynamically by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Action Selection -->
+                        <div class="space-y-3">
+                            <label class="text-xs font-extrabold text-brand-textDark uppercase tracking-wider block">2. Proposed Roster Transaction</label>
+                            <div class="grid grid-cols-1 gap-3" id="trade-actions-list-holder">
+                                <!-- Populated dynamically by JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-6 border-t border-brand-border mt-6">
+                        <p class="text-[11px] text-brand-textMuted flex items-center gap-1.5 leading-snug">
+                            <span class="material-icons text-[14px] text-brand-blue">info_outline</span>
+                            All rule outcomes check transaction legality against direct 2026-27 tax apron triggers.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Auditing Summary Section (Right Side) -->
+                <div class="lg:col-span-5 bg-white border border-brand-border rounded-3xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden shadow-sm">
+                    <div class="absolute -right-24 -top-24 w-48 h-48 rounded-full bg-slate-100 blur-3xl pointer-events-none"></div>
+                    
+                    <div class="space-y-6 relative z-10">
+                        <span class="text-[10px] font-extrabold text-brand-textMuted uppercase tracking-widest block">Audit Report</span>
+                        
+                        <!-- Premium Allowed / Prohibited Block -->
+                        <div id="verdict-banner-container" class="rounded-2xl p-8 border-2 flex flex-col items-center justify-center text-center space-y-4 transition-all duration-300">
+                            <span class="material-icons text-6xl" id="verdict-banner-icon">check_circle</span>
+                            <h4 class="text-4xl font-black tracking-tight" id="verdict-banner-title">ALLOWED</h4>
+                            <div class="w-full h-px bg-slate-100 my-2"></div>
+                            <p class="text-[11px] font-extrabold uppercase tracking-widest text-brand-textMuted leading-relaxed" id="verdict-summary-label">
+                                UNDER CAP • AGGREGATE SALARIES
+                            </p>
+                        </div>
+
+                        <!-- Contextual Legal Breakdown -->
+                        <div class="space-y-2.5">
+                            <span class="text-[10px] font-extrabold text-brand-textMuted uppercase tracking-widest block font-mono">CBA Mechanism Evaluation</span>
+                            <div id="verdict-analysis-body" class="text-sm text-slate-700 leading-relaxed bg-slate-50 border border-slate-100 p-5 rounded-xl space-y-2">
+                                <!-- Injected with rule breakdown -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-6 border-t border-brand-border mt-6 text-center lg:text-left">
+                        <p class="text-[10px] text-brand-textMuted leading-normal">
+                            Note: Evaluations represent standard rules and do not account for trade moratorium parameters.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resource Hub & Expert Board -->
+        <section id="resources-section" class="bg-white border border-brand-border rounded-3xl p-6 sm:p-8 space-y-8 shadow-sm">
+            <div class="space-y-2 border-b border-slate-100 pb-5">
+                <div class="flex items-center gap-2">
+                    <span class="material-icons text-brand-blue">import_contacts</span>
+                    <span class="text-xs font-bold text-brand-blue uppercase tracking-widest block">Resources Directory</span>
+                </div>
+                <h3 class="text-2xl sm:text-3xl font-black text-brand-textDark tracking-tight">
+                    CBA Resource Directory & Expert Hub
+                </h3>
+                <p class="text-brand-textMuted text-sm">
+                    This platform serves as a visual, interactive guide and does not publish proprietary numbers databases. For official document archives and elite reporting, always consult these primary sources:
+                </p>
+            </div>
+
+            <!-- Primary Resource Materials Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- PDF Document Download -->
+                <div class="border border-slate-150 rounded-2xl p-6 flex flex-col justify-between space-y-4 bg-gradient-to-br from-slate-50 to-white hover:border-slate-300 transition-all">
+                    <div class="space-y-2">
+                        <div class="inline-flex items-center gap-1.5 text-xs font-bold text-red-600 bg-red-50 px-2.5 py-1 rounded-full uppercase">
+                            <span class="material-icons text-xs">picture_as_pdf</span>
+                            Official Primary Source
+                        </div>
+                        <h4 class="text-lg font-black text-brand-textDark">2023 NBA Collective Bargaining Agreement</h4>
+                        <p class="text-xs text-brand-textMuted leading-relaxed">
+                            Access the complete, definitive 600+ page Collective Bargaining Agreement signed directly between the NBA and NBPA. Our portal exists strictly as a guide to simplify this core source document.
+                        </p>
+                    </div>
+                    <a href="https://imgix.cosmicjs.com/25da5eb0-15eb-11ee-b5b3-fbd321202bdf-Final-2023-NBA-Collective-Bargaining-Agreement-6-28-23.pdf" target="_blank" class="w-full bg-brand-blue hover:bg-brand-blueHover text-white text-center py-3 rounded-xl text-xs font-extrabold tracking-wider uppercase shadow-md transition-all flex items-center justify-center gap-2">
+                        <span>Read Official CBA PDF</span>
+                        <span class="material-icons text-xs">open_in_new</span>
+                    </a>
+                </div>
+
+                <!-- Spotrac Apron/Hard Cap Tracker -->
+                <div class="border border-slate-150 rounded-2xl p-6 flex flex-col justify-between space-y-4 bg-gradient-to-br from-slate-50 to-white hover:border-slate-300 transition-all">
+                    <div class="space-y-2">
+                        <div class="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full uppercase">
+                            <span class="material-icons text-xs">equalizer</span>
+                            Capital Numbers & Tracking
+                        </div>
+                        <h4 class="text-lg font-black text-brand-textDark">Spotrac NBA Apron Tracker</h4>
+                        <p class="text-xs text-brand-textMuted leading-relaxed">
+                            Spotrac is the premier platform for contract data, tracking team payroll levels, and individual player cap holds. For real-time data calculations and payroll details, check their apron index.
+                        </p>
+                    </div>
+                    <a href="https://www.spotrac.com/nba/apron/_/year/2025" target="_blank" class="w-full bg-slate-900 hover:bg-black text-white text-center py-3 rounded-xl text-xs font-extrabold tracking-wider uppercase shadow-md transition-all flex items-center justify-center gap-2">
+                        <span>Visit Spotrac Tracker</span>
+                        <span class="material-icons text-xs">open_in_new</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Highly respected cap analysts and education centers -->
+            <div class="space-y-4">
+                <span class="text-[10px] font-extrabold text-brand-textMuted uppercase tracking-wider block font-mono">Highly Credited Cap Experts & Communities</span>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <!-- Bobby Marks Card -->
+                    <div class="border border-slate-100 p-4.5 rounded-xl bg-slate-50/50 space-y-2.5">
+                        <div class="flex items-center gap-2">
+                            <span class="material-icons text-sky-500">verified</span>
+                            <span class="font-extrabold text-sm text-slate-800">Bobby Marks</span>
+                        </div>
+                        <p class="text-[11px] text-brand-textMuted leading-relaxed">
+                            Former Nets Assistant GM & lead ESPN front-office expert. We credit his incredible breakdowns and Sports Business Classroom resources for clarifying apron rules.
+                        </p>
+                        <a href="https://docs.google.com/document/d/1vrDEXjNX9x15m9HSjSHpIVbRSihnTvtkOBCqC-HomQc/edit?_kx=Q3SpGUm_AvyY6IB1T_ofQV4WcZ1HK45n7zyFLv62U8s.Scdv5B&tab=t.0" target="_blank" class="text-xs font-bold text-brand-blue hover:underline inline-flex items-center gap-1">
+                            SBC Doc Resource <span class="material-icons text-xs">open_in_new</span>
+                        </a>
+                    </div>
+
+                    <!-- Keith Smith Card -->
+                    <div class="border border-slate-100 p-4.5 rounded-xl bg-slate-50/50 space-y-2.5">
+                        <div class="flex items-center gap-2">
+                            <span class="material-icons text-sky-500">verified</span>
+                            <span class="font-extrabold text-sm text-slate-800">Keith Smith</span>
+                        </div>
+                        <p class="text-[11px] text-brand-textMuted leading-relaxed">
+                            Front Office Show and Spotrac writer. Widely credited for making intricate roster decisions simple and accessible for the general public.
+                        </p>
+                        <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">@KeithSmithNBA</span>
+                    </div>
+
+                    <!-- Yossi Gozlan Card -->
+                    <div class="border border-slate-100 p-4.5 rounded-xl bg-slate-50/50 space-y-2.5">
+                        <div class="flex items-center gap-2">
+                            <span class="material-icons text-sky-500">verified</span>
+                            <span class="font-extrabold text-sm text-slate-800">Yossi Gozlan</span>
+                        </div>
+                        <p class="text-[11px] text-brand-textMuted leading-relaxed">
+                            HoopsHype cap expert. Incredibly skilled at auditing real-time sign-and-trades and forecasting tax apron limits for the basketball community.
+                        </p>
+                        <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">@YossiGozlan</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Financial scale parameters directory -->
+        <section id="financials-section" class="bg-white border border-brand-border rounded-3xl p-6 sm:p-8 space-y-6 shadow-sm">
+            <div class="space-y-2">
+                <div class="flex items-center gap-2">
+                    <span class="material-icons text-brand-blue">grid_on</span>
+                    <span class="text-xs font-bold text-brand-blue uppercase tracking-widest block font-mono">Academic Tables</span>
+                </div>
+                <h3 class="text-xl font-black text-brand-textDark tracking-tight">
+                    2026-27 Mid-Level Exception & Scale Directory
+                </h3>
+                <p class="text-brand-textMuted text-xs">
+                    All contract exceptions dynamically adjust using salary cap ratios. Below are the official values calculated for the 2026-27 NBA season.
+                </p>
+            </div>
+
+            <!-- Financial directory points grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- MLE Box -->
+                <div class="border border-slate-150 rounded-2xl p-5 space-y-4">
+                    <h4 class="text-xs font-extrabold text-brand-textDark flex items-center gap-1.5 border-b pb-3 border-slate-100 uppercase">
+                        <span class="material-icons text-brand-blue text-base">monetization_on</span>
+                        Mid-Level Exceptions (MLE)
+                    </h4>
+                    <div class="space-y-3 text-xs">
+                        <div class="flex justify-between items-center">
+                            <span class="font-medium text-slate-500">Non-Taxpayer MLE</span>
+                            <span class="font-bold text-brand-textDark font-mono">$15.044M</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="font-medium text-slate-500">Room MLE</span>
+                            <span class="font-bold text-brand-textDark font-mono">$9.366M</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="font-medium text-slate-500">Taxpayer MLE</span>
+                            <span class="font-bold text-brand-textDark font-mono">$6.064M</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cap Scale Box -->
+                <div class="border border-slate-150 rounded-2xl p-5 space-y-4">
+                    <h4 class="text-xs font-extrabold text-brand-textDark flex items-center gap-1.5 border-b pb-3 border-slate-100 uppercase">
+                        <span class="material-icons text-amber-500 text-base">assessment</span>
+                        Cap Parameters
+                    </h4>
+                    <div class="space-y-3 text-xs">
+                        <div class="flex justify-between items-center">
+                            <span class="font-medium text-slate-500">Salary Cap</span>
+                            <span class="font-bold text-brand-textDark font-mono">$164.961M</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="font-medium text-slate-500">Minimum Salary Floor</span>
+                            <span class="font-bold text-brand-textDark font-mono">$148.465M</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="font-medium text-slate-500">Moratorium Launch</span>
+                            <span class="font-bold text-slate-800 text-[11px]">Wed., July 1 at 12:01 AM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Moratorium Box -->
+                <div class="border border-slate-150 rounded-2xl p-5 space-y-4 bg-slate-50/50">
+                    <h4 class="text-xs font-extrabold text-brand-textDark flex items-center gap-1.5 border-b pb-3 border-slate-100 uppercase">
+                        <span class="material-icons text-rose-500 text-base">schedule</span>
+                        moratorium Timeline
+                    </h4>
+                    <p class="text-[11px] text-slate-600 leading-relaxed">
+                        Teams are permitted to negotiate starting at 6:00 p.m. ET on June 30, six hours prior to the moratorium period commencing on July 1. <strong>The moratorium window closes at noon ET on Monday, July 6.</strong>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer Section with No-Copyright Disclaimer -->
+    <footer class="border-t border-brand-border bg-white px-4 py-8 sm:px-8 mt-12 text-center shadow-sm">
+        <div class="max-w-6xl mx-auto space-y-6">
+            <p class="text-xs font-bold tracking-wider text-brand-textDark uppercase">
+                © 2026-2027 <span class="text-brand-blue">LEARNING THE CBA</span> | Community Reference & Education Hub
+            </p>
             
-            if (ruleText.includes(input) || keywords.includes(input)) {
-                rules[i].classList.remove('hidden');
+            <div class="bg-slate-50 border border-slate-100 rounded-2xl p-5 text-left text-[11px] text-brand-textMuted space-y-3 max-w-4xl mx-auto">
+                <p class="leading-relaxed">
+                    <strong>Independent Academic Notice:</strong> LearningTheCBA.com is an independent community project created solely for the purpose of basketball educational research, rule visualization, and salary cap literacy. This platform does not host, curate, or compete with premium database portals such as Spotrac or HoopsHype, nor is it associated with, endorsed by, or representing the National Basketball Association (NBA) or the National Basketball Players Association (NBPA). All registered logos, symbols, and trademarks are properties of their prospective associations.
+                </p>
+                <p class="leading-relaxed">
+                    <strong>Zero Copyright Intent:</strong> We intend absolutely zero copyright infringement of any nature. Standard numbers directory tracking, roster listings, and historical payroll metrics are the sole property of platforms like Spotrac. We heavily credit their platform and encourage all users to consult their database to obtain real-time contracts. All rule citations and guides throughout this page are developed using publicly available templates and materials derived from ESPN front-office journalists (including Bobby Marks) and the Sports Business Classroom Program. All materials are completely paraphrased to maintain clear boundaries of intellectual respect.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // High-fidelity database of rule answers mapping directly to NBA CBA topics, incorporating deep Article details.
+        // Every article is structurally designated and meticulously paraphrased.
+        const QUESTION_DATABASE = [
+            {
+                id: "bri-definition",
+                article: "Article I",
+                primaryKeyword: "basketball related income",
+                keywords: ["bri", "basketball related income", "revenue", "broadcast", "income", "split", "owners", "players"],
+                question: "What is Basketball Related Income (BRI) and how is it used?",
+                citation: "CBA Article I, Section 1(h)",
+                answer: `
+                    <p><strong>Basketball Related Income (BRI)</strong> represents the total cumulative operational revenue generated by the NBA system. It is the fundamental baseline used to calculate the annual Salary Cap, Luxury Tax, and Apron levels:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>Core Revenue Streams:</strong> Includes national and local broadcast rights (television, radio, digital), arena gate receipts (ticket sales), arena sponsorships, local merchandise, concession sales, and stadium naming rights.</li>
+                        <li><strong>The Split:</strong> Under the 2023 CBA agreement, players are guaranteed a designated share of BRI (approximately 50% to 51.5%), which is paid out via player salaries and league-wide benefit packages. Any deficit or escrow surplus is reconciled annually.</li>
+                        <li><strong>Exclusions:</strong> Excludes expansion fees paid by new franchises, or direct capital assets from stadium development.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "designated-veteran-definition",
+                article: "Article I",
+                primaryKeyword: "designated veteran",
+                keywords: ["designated veteran", "supermax", "dvp", "extension", "maximum annual salary", "8 years", "9 years", "35%"],
+                question: "What are Designated Veteran Player Contracts and Extensions (Supermax)?",
+                citation: "CBA Article I, Section 1(p), (q), (r)",
+                answer: `
+                    <p>Often referred to as the 'Supermax', a <strong>Designated Veteran Player</strong> contract or extension is designed to incentivize superstars to remain with their original franchises by offering financial terms other teams cannot match:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>Tier 3 Maximum Salary (35%):</strong> Allows a veteran player entering their 8th or 9th season of experience (who has spent their entire career with their current team, unless traded during their first 4 seasons) to sign a deal worth up to <strong>35% of the Salary Cap</strong>. Normally, players with under 10 years of experience are capped at 30%.</li>
+                        <li><strong>Designated Veteran Contract:</strong> A new 5-year contract signed in free agency.</li>
+                        <li><strong>Designated Veteran Extension:</strong> An extension that covers up to 6 total seasons (adding up to 5 additional years to an existing contract).</li>
+                        <li><strong>Performance Eligibility:</strong> The player must meet strict elite thresholds, such as winning MVP, Defensive Player of the Year, or being selected to an All-NBA Team in the season immediately preceding the extension (or two of the three preceding seasons).</li>
+                    </ul>
+                `
+            },
+            {
+                id: "eto-definition",
+                article: "Article I",
+                primaryKeyword: "early termination option",
+                keywords: ["early termination option", "eto", "effective season", "shorten contract", "player option", "opt out"],
+                question: "What is an Early Termination Option (ETO) and how does it function?",
+                citation: "CBA Article I, Section 1(u), (v)",
+                answer: `
+                    <p>An <strong>Early Termination Option (ETO)</strong> is a contractual mechanism that grants a player the unilateral power to shorten the length of their existing contract:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>Difference from a Player Option:</strong> A standard 'Player Option' allows a player to opt <em>in</em> to an additional year. An 'ETO' allows a player to opt <em>out</em> of an already contracted year (shortening the duration).</li>
+                        <li><strong>The 'Effective Season':</strong> The first year of the contract that is canceled if the player chooses to execute the ETO. For example, if a 5-year contract has an ETO after Year 4, the 5th year is the 'Effective Season' that is discarded.</li>
+                        <li><strong>Eligibility:</strong> ETOs can only be included in contracts with a minimum original length of 5 seasons, and cannot be exercised before the conclusion of the 4th season of the deal.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "years-of-service-definition",
+                article: "Article I",
+                primaryKeyword: "years of service",
+                keywords: ["years of service", "service time", "experience", "active list", "inactive list", "disqualified", "holdout"],
+                question: "How are player 'Years of Service' officially calculated?",
+                citation: "CBA Article I, Section 1(iiii)",
+                answer: `
+                    <p>A player's <strong>Years of Service</strong> metric acts as the foundation for determining their minimum legal salary, as well as their maximum contract limit (e.g., 25%, 30%, or 35% cap tiers):</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>The Baseline Rule:</strong> A player is credited with one full Year of Service for each season they spend on a team's Active or Inactive List for at least <strong>one day</strong> during the regular season.</li>
+                        <li><strong>The 30-Day Holdout Penalty:</strong> A player will *not* earn a Year of Service if they withhold their playing services (e.g., a contract holdout or refusal to play) for more than 30 days after the regular season begins.</li>
+                        <li><strong>Restricted Free Agent Block:</strong> If a player is a Restricted Free Agent, is tendered a Qualifying Offer, has their acceptance deadline extended to March 1, and still does not sign a contract by March 1, they receive zero service credit for that season.</li>
+                        <li><strong>Strict Limit:</strong> A player can never earn more than one Year of Service per individual NBA calendar season, regardless of how many games or teams they play for.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "moratorium-definition",
+                article: "Article I",
+                primaryKeyword: "moratorium",
+                keywords: ["moratorium", "moratorium period", "july moratorium", "negotiate", "july 1", "july 6"],
+                question: "What is the Moratorium Period and what is prohibited during it?",
+                citation: "CBA Article I, Section 1(mm), (nn)",
+                answer: `
+                    <p>The **Moratorium Period** is an annual cooling-off and auditing phase at the transition of the salary cap calendar year:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>The Timeline:</strong> Begins annually at 12:01 a.m. Eastern Time on July 1 and concludes at 12:00 p.m. Eastern Time on July 6.</li>
+                        <li><strong>What is Allowed:</strong> Teams and players are fully permitted to 'negotiate' (meaning any verbal or written talks regarding employment terms) and reach verbal agreements on new contracts.</li>
+                        <li><strong>What is Frozen:</strong> With minor exceptions (such as signing Rookies to scale contracts, signing minimum deals, or accepting qualifying offers), teams *cannot* officially sign free agents or execute trades until the moratorium period closes on July 6. This allows the league to finalize BRI audits and calculate the exact Salary Cap figures for the new year.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "team-affiliate-definition",
+                article: "Article I",
+                primaryKeyword: "team affiliate",
+                keywords: ["team affiliate", "affiliate", "owner", "control", "circumvention", "under-the-table"],
+                question: "What is a 'Team Affiliate' and how does it prevent salary cap circumvention?",
+                citation: "CBA Article I, Section 1(ttt)",
+                answer: `
+                    <p>A **Team Affiliate** is a highly detailed legal classification designed to close loopholes regarding secret financial side-deals between owners and players:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>Who is Classified:</strong> Includes any individual or entity holding an ownership interest of 5% or more in an NBA team, any entity controlled by or under common control with the team, and any immediate family member or executive officer of the team's owners or parent companies.</li>
+                        <li><strong>The Prohibition:</strong> Under the CBA's anti-circumvention rules, no Team Affiliate is permitted to make payments, offer commercial partnerships, or provide outside compensation of any kind to an active player. This prevents owners from paying players 'under-the-table' through secondary business ventures to bypass the salary cap.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "two-way-definition",
+                article: "Article I",
+                primaryKeyword: "two-way contract",
+                keywords: ["two-way", "two-way contract", "g league", "conversion option", "exhibit 10", "hybrid", "salary"],
+                question: "How do Two-Way Contracts and their Conversion Options operate?",
+                citation: "CBA Article I, Section 1(qqq)",
+                answer: `
+                    <p>A **Two-Way Contract** is a hybrid roster spot designed to bridge the development gap between the NBA and the G League:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>Roster Status:</strong> Two-Way players are eligible to participate with their NBA team's parent club while spending the majority of their playing schedule with the G League affiliate. They do not count toward the standard 15-player active roster limit (teams can have up to 3 Two-Way players).</li>
+                        <li><strong>Two-Way Player Salary:</strong> The salary for a Two-Way Contract is set at exactly **50% of the Minimum Annual Salary** of a player with zero Years of Service. This is calculated pro-rata: 
+                        $$\\text{Two-Way Salary} = 0.50 \\times \\text{Rookie Minimum} \\times \\left( \\frac{\\text{Days Remaining in Regular Season}}{\\text{Total Days in Regular Season}} \\right)$$</li>
+                        <li><strong>Exclusions:</strong> No Two-Way Contract may contain any bonuses, incentive compensation, deferred compensation, or loans.</li>
+                        <li><strong>Standard Conversion Option:</strong> The franchise retains a unilateral right to convert any Two-Way contract into a standard NBA contract at any point during the season. This standard contract automatically shifts the player's compensation to the league minimum scale corresponding with their years of service.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "upc-required-form-definition",
+                article: "Article II",
+                primaryKeyword: "uniform player contract (upc) exhibit a",
+                keywords: ["upc", "uniform player contract", "exhibit a", "required form", "standard form", "contract template"],
+                question: "What is the Uniform Player Contract (UPC) and what form is required?",
+                citation: "CBA Article II, Section 1",
+                answer: `
+                    <p>Every player contract executed between a player and an NBA team must utilize the standard <strong>Uniform Player Contract (UPC)</strong>, which is annexed directly to the CBA as <strong>Exhibit A</strong>.</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>Required Format:</strong> This standardized template guarantees uniform labor standards across all 30 franchises, protecting structural and visual transparency for players and ownership.</li>
+                        <li><strong>No Non-Approved Clauses:</strong> Unless specifically permitted under the allowable amendments of the CBA, no custom clauses or unauthorized terms can be inserted into the body of the UPC.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "upc-limitation-amendments-definition",
+                article: "Article II",
+                primaryKeyword: "contract amendments and voiding rules",
+                keywords: ["disapproved contract", "null and void", "unauthorized amendments", "contract disapproval", "commissioner veto", "amendment limits"],
+                question: "What happens if a team and player add unauthorized amendments to a contract?",
+                citation: "CBA Article II, Section 2",
+                answer: `
+                    <p>The CBA strictly restricts modifications to the standard Uniform Player Contract (UPC). Any unauthorized addition is heavily penalized:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>Commissioner Disapproval:</strong> If a team and a player enter into a UPC containing an amendment not specifically permitted, or execute an unauthorized subsequent amendment, the contract or subsequent amendment <strong>shall be disapproved by the Commissioner</strong>.</li>
+                        <li><strong>Rendered Null and Void:</strong> Disapproved contracts or subsequent amendments are legally rendered completely null, void, and unenforceable.</li>
+                        <li><strong>Two-Way & Exhibit 10 Bans:</strong> No team and player may extend, renegotiate, or include an Option Year or Early Termination Option (ETO) in a Two-Way Contract or a contract containing an Exhibit 10.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "allowable-amendments-general-definition",
+                article: "Article II",
+                primaryKeyword: "allowable contract amendments",
+                keywords: ["allowable amendments", "signing bonuses", "incentives", "benchmarks", "academic benchmark", "nba.com statistics", "conditioning program", "summer league"],
+                question: "What amendments are allowed regarding signing bonuses, physical conditioning, and performance benchmarks?",
+                citation: "CBA Article II, Section 3(a)-(c)",
+                answer: `
+                    <p>While standard terms are rigid, Section 3 outlines specific <strong>Allowable Amendments</strong> that teams and players can negotiate through standard exhibits:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>Signing & Performance Bonuses (Exhibit 1):</strong> Players can negotiate signing bonuses and incentive-based benchmarks. To protect validity, performance incentives <em>must</em> provide for positive achievements, be based on specific numerical criteria or Generally Recognized League Honors, and rely <strong>strictly on official NBA statistics as published on NBA.com</strong>.</li>
+                        <li><strong>Off-Season & Conditioning:</strong> Teams and players can agree on physical condition or academic achievement benchmarks (e.g., earning a college degree or completing a certified leadership program), including off-season summer league attendance and specialized skill/conditioning programs.</li>
+                        <li><strong>Extra Promotional Appearances:</strong> Parties can amend the standard promotional terms to add extra promotional appearances beyond the required baseline, backed by specified additional compensation.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "compensation-payment-schedule-definition",
+                article: "Article II",
+                primaryKeyword: "compensation schedule & advances",
+                keywords: ["payment schedule", "salary advance", "maximum advance", "semi-monthly", "base compensation", "deferred compensation", "november 1"],
+                question: "What are the rules for contract payment schedules and maximum salary advances?",
+                citation: "CBA Article II, Section 3(d)",
+                answer: `
+                    <p>Section 3(d) establishes the precise mathematical limits for scheduling a player's base salary and receiving early advances:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>Standard Semi-Monthly Schedules:</strong> For salaries above the minimum, teams and players can contract to distribute Base Compensation in either **12 equal semi-monthly payments** or **36 equal semi-monthly payments**, launching on November 1 of each year.</li>
+                        <li><strong>The Maximum Advance Amount:</strong> For contracts with injury or skill protection, players can receive an advance on their salary prior to November 1. This advance is strictly capped at the **lesser of**:
+                            <ul class="list-none pl-4 mt-1 space-y-1">
+                                <li>• <strong>80%</strong> of the player's protected salary for that season, or</li>
+                                <li>• <strong>50%</strong> of the player's total Base Compensation.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Pre-October Threshold:</strong> No more than **25%** of the player's Base Compensation for that season may be paid to the player prior to the October 1 immediately preceding the Regular Season.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "exhibit-9-training-camp-definition",
+                article: "Article II",
+                primaryKeyword: "exhibit 9 training camp contract",
+                keywords: ["exhibit 9", "training camp contract", "training camp", "non-guaranteed contract", "roster limits", "exhibit 9 limits", "six contracts"],
+                question: "What is an Exhibit 9 contract and what limits apply to Training Camp deals?",
+                citation: "CBA Article II, Section 3(r)",
+                answer: `
+                    <p>An **Exhibit 9** clause allows teams to sign players to non-guaranteed, training camp rosters without committing to long-term salary risks in the event of pre-season injuries:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>Training Camp Contract (Non-Guaranteed):</strong> The contract must be exactly 1 season in length, provide for the Minimum Player Salary or Two-Way Salary, and feature absolutely zero compensation protection (guarantees). It eliminates the player's right to receive Base Compensation if terminated prior to the first day of the Regular Season.</li>
+                        <li><strong>The 14-Player Baseline Rule:</strong> A team can only execute an Exhibit 9 contract if, at the time of signing, the team already has at least **14 players** signed to standard contracts (excluding Two-Way or other Exhibit 9 deals) on its roster.</li>
+                        <li><strong>Hard Roster Limit:</strong> No team may be a party to more than **six (6) concurrent** Non-Guaranteed, Training Camp (Exhibit 9) Contracts.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "exhibit-10-bonus-definition",
+                article: "Article II",
+                primaryKeyword: "exhibit 10 bonus & conversion rules",
+                keywords: ["exhibit 10", "exhibit 10 bonus", "g league conversion", "affiliate player", "sixty days", "returning rights", "twenty-five thousand", "fine", "maximum exhibit 10 bonus"],
+                question: "How do Exhibit 10 bonuses, G League affiliate rules, and conversion mechanics operate?",
+                citation: "CBA Article II, Section 3(s)",
+                answer: `
+                    <p>An **Exhibit 10** provision provides flexibility to link standard training camp contracts to G League affiliates and conversion options:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>The Exhibit 10 Bonus:</strong> Entitles a player to a bonus (scaled dynamically up to **$75,000** pro-rata with annual cap adjustments) if they are waived by their NBA team, sign with the G League, and complete **60 consecutive days of service** with the team's designated G League affiliate.</li>
+                        <li><strong>Conversion Protection Amount:</strong> If converted to a Two-Way Contract, the contract guarantees salary protection equal to the Exhibit 10 bonus amount (acting as the Conversion Protection Amount).</li>
+                        <li><strong>Returning Rights Warning & Fines:</strong> If another team signs an affiliate player whose G League returning rights are held by a different franchise's G League affiliate, the signing team **must provide written notice** to the player. Failure to provide this notice triggers an **NBA fine of no less than $25,000**.</li>
+                        <li><strong>Strict Limits:</strong> Teams are capped at **six (6) active Exhibit 10 contracts** concurrently. Contracts must be for 1 season, at the Minimum Player Salary, and feature zero base guarantees.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "compensation-protection-types-definition",
+                article: "Article II",
+                primaryKeyword: "guarantee protections & voids",
+                keywords: ["compensation protection", "injury protection", "death protection", "lack of skill", "basketball-related injury", "void guarantees", "suicide", "prohibited substance", "substance abuse", "felony conviction", "guarantee void"],
+                question: "What are the types of salary protections (guarantees) and what voiding exclusions apply?",
+                citation: "CBA Article II, Section 4(a)-(d)",
+                answer: `
+                    <p>Teams can protect (guarantee) player salaries in whole or in part. Section 4 defines four structural guarantee categories and the explicit conduct that voids them:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>The Four Guarantees:</strong> Base salaries can be protected against termination due to (1) **Lack of Skill**, (2) **Death**, (3) **Basketball-Related Injury**, or (4) **Injury or Illness** (excluding mental disability, which requires a separate designated mental disability protection).</li>
+                        <li><strong>The Structural Void Triggers:</strong> Even if a contract is fully guaranteed, all protections are **rendered void** and the team is relieved of payment duties if the termination, injury, or death is caused by:
+                            <ul class="list-none pl-4 mt-1 space-y-1">
+                                <li>• <strong>Felony Conviction:</strong> Conduct occurring during a felony for which the player is convicted (including guilty/no-contest/nolo contendere pleas).</li>
+                                <li>• <strong>Prohibited Activities:</strong> Engaging in high-risk sports or activities banned by Paragraph 12 of the UPC (unless specifically amended in Exhibit 5).</li>
+                                <li>• <strong>Suicide / Self-Harm:</strong> Suicide, attempted suicide, or intentional self-inflicted injuries.</li>
+                                <li>• <strong>Substance Abuse:</strong> Crucial anti-circumvention void rules block protections if caused by the abuse of alcohol, use of Prohibited Substances, or prescription drug addiction.</li>
+                                <li>• <strong>Material Breach:</strong> The player is in material breach of their contract at the time of termination.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                `
+            },
+            {
+                id: "max-annual-salary-definition",
+                article: "Article II",
+                primaryKeyword: "maximum annual salary",
+                keywords: ["maximum annual salary", "max contract", "tier max", "percent of cap", "25%", "30%", "35%", "incentives", "renegotiation"],
+                question: "What are the Maximum Annual Salary contract limits and amendment mechanics?",
+                citation: "CBA Article II, Section 7",
+                answer: `
+                    <p>A player's maximum starting salary is strictly regulated based on their accrued **Years of Service** as a percentage of the total Salary Cap in effect during the contract's execution:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>Tier 1 (&lt; 7 Years of Service):</strong> Capped at the greater of <strong>25% of the Salary Cap</strong>, or 105% of the salary of the final season of the player's prior contract.</li>
+                        <li><strong>Tier 2 (7 to 9 Years of Service):</strong> Capped at the greater of <strong>30% of the Salary Cap</strong>, or 105% of the final year salary of the player's prior contract.</li>
+                        <li><strong>Tier 3 (10+ Years of Service):</strong> Capped at the greater of <strong>35% of the Salary Cap</strong>, or 105% of the final year salary of the player's prior contract.</li>
+                        <li><strong>Extension Amendment Mechanics (The Safety Net):</strong> If the first year of an extension starts and exceeds the maximum tier cap due to cap fluctuations, the salary is immediately deemed amended down. The reduction applies in order: (1) Signing bonus allocation, (2) Likely/Unlikely performance bonuses (pro-rata), (3) Base Compensation. Subsequent years are adjusted downward proportionally.</li>
+                        <li><strong>Rookie Scale Contract Requirement:</strong> Any contract/extension for a 5th-year eligible player that exceeds 25% of the cap must cover at least 4 seasons (excluding option years).</li>
+                    </ul>
+                `
+            },
+            {
+                id: "fifth-year-eligible-definition",
+                article: "Article II",
+                primaryKeyword: "fifth-year eligible (derrick rose rule)",
+                keywords: ["derrick rose rule", "5th year eligible", "higher max criteria", "rookie scale extension", "all-nba", "mvp", "dpoy", "30%"],
+                question: "How do 5th-Year Eligible Players qualify for a Higher Maximum Cap Tier?",
+                citation: "CBA Article II, Section 7(a)(i) & 7(d)",
+                answer: `
+                    <p>Often referred to historically as the *Derrick Rose Rule*, a **5th-Year Eligible Player** is a player with 4 Years of Service entering a new contract. Under standard rules, they are restricted to the Tier 1 limit of 25% of the Salary Cap. However, they are eligible to receive up to **30% of the Salary Cap** from their prior team if they meet the **Higher Max Criteria**:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>All-NBA Selection:</strong> Named to the All-NBA First, Second, or Third Team in the immediately preceding season, or in two seasons during the immediately preceding three seasons.</li>
+                        <li><strong>Defensive Player of the Year (DPOY):</strong> Named DPOY in the preceding season or in two of the preceding three seasons.</li>
+                        <li><strong>Most Valuable Player (MVP):</strong> Named NBA MVP during any of the preceding three seasons.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "trade-bonus-amendment-definition",
+                article: "Article II",
+                primaryKeyword: "trade bonus maximum check",
+                keywords: ["trade kicker", "trade bonus", "cap limit", "trade bonus reduction", "amendment", "exceed max"],
+                question: "How do Maximum Cap limits impact Trade Bonuses (Trade Kickers)?",
+                citation: "CBA Article II, Section 7(f)",
+                answer: `
+                    <p>A player contract may include a **Trade Bonus** (commonly known as a trade kicker) that pays the player a cash bonus upon being traded. However, this bonus is subject to strict maximum salary limitations:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>The Ceiling Block:</strong> If a trade kicker would cause the player's total Salary plus Unlikely Bonuses in the year of the trade to exceed their applicable Maximum Annual Salary tier (25%, 30%, or 35%), the kicker is not voided; instead, it is **automatically reduced**.</li>
+                        <li><strong>The Math Check:</strong> The bonus is deemed amended and scaled down to the exact dollar amount necessary to land perfectly on the player's maximum tier limit for that season.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "promotional-activities-definition",
+                article: "Article II",
+                primaryKeyword: "promotional activities & player audio",
+                keywords: ["promotional appearance", "wireless microphone", "player audio", "appearances", "commercial sponsor", "reimbursement", "fan appreciation"],
+                question: "What are a player's contractual obligations for Promotional Activities and Player Audio?",
+                citation: "CBA Article II, Section 8",
+                answer: `
+                    <p>Under the Uniform Player Contract, players must fulfill reasonable requests to support NBA and Team marketing. Section 8 defines the exact legal limits to protect player schedule boundaries:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>Appearance Caps:</strong> A player satisfies their obligation by making exactly **7 individual personal appearances** (at least two for season ticketholder events) and **5 group appearances** per year. Up to 2 may be assigned to NBA Properties.</li>
+                        <li><strong>Commercial Sponsorship Compensation:</strong> Players receive **$3,500** for appearances made on behalf of Team sponsors. If they make 8 or more sponsor appearances in a year, the rate increases to **$4,500** for each subsequent appearance.</li>
+                        <li><strong>Wireless Microphone (Player Audio):</strong> Upon request, players must wear a wireless microphone during games or practices. To prevent issues, the audio is screened prior to airing. Live audio cannot be broadcast without player consent. <strong>Most importantly, Player Audio can never be used to impose league discipline on a player.</strong></li>
+                        <li><strong>Fan Appreciation:</strong> Players must participate in fan appreciation events (signing autographs, greetings) up to 4 times per season.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "ten-day-contract-definition",
+                article: "Article II",
+                primaryKeyword: "10-day contract rules",
+                keywords: ["10-day contract", "hardship", "minimum salary", "roster limits", "january 5", "waiver", "consecutive"],
+                question: "What are the rules, salary minimums, and roster limits for 10-Day Contracts?",
+                citation: "CBA Article II, Section 9",
+                answer: `
+                    <p>A **10-Day Contract** allows teams to sign temporary players mid-season without committing to a full-season salary cap hit:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>Window of Availability:</strong> Teams may begin executing 10-Day Contracts on **January 5** of any season.</li>
+                        <li><strong>Contract Duration:</strong> A 10-Day Contract must last for the longer of (x) 10 calendar days, or (y) a period covering 3 games played by the signing team.</li>
+                        <li><strong>Salary Limit:</strong> The compensation must be exactly the pro-rata portion of the NBA Minimum Player Salary for the player's Years of Service.</li>
+                        <li><strong>Roster Limitation:</strong> A team cannot sign the same player to a 10-day deal more than **twice** in a single season.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "rest-of-season-definition",
+                article: "Article II",
+                primaryKeyword: "rest-of-season contract",
+                keywords: ["rest of season", "minimum salary", "two-way exception", "temporary contract", "pro-rata minimum"],
+                question: "How do Rest-of-Season Contracts function?",
+                citation: "CBA Article II, Section 10",
+                answer: `
+                    <p>A **Rest-of-Season Contract** allows a team to sign a player to fill a roster opening for the remainder of the active season:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>Availability:</strong> Can be executed at any point after the first day of the NBA Regular Season.</li>
+                        <li><strong>Minimum Compensation:</strong> The salary cannot be less than the pro-rata portion of the Minimum Player Salary for that player's experience tier, calculated across the remaining days in the regular season.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "moving-expenses-definition",
+                article: "Article III",
+                primaryKeyword: "moving & housing reimbursements",
+                keywords: ["moving expenses", "relocation", "housing costs", "housing reimbursement", "hotel accommodations", "hotel stays", "lease obligation", "minimize liability", "$6000", "46 days"],
+                question: "What relocation benefits must a team pay when a player is traded?",
+                citation: "CBA Article III, Section 1",
+                answer: `
+                    <p>When a player's contract is assigned from one team to another via a trade, the assignee (receiving) team is legally obligated to reimburse the player for specified, verified moving and temporary housing costs:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>Moving Expenses (Sec 1a):</strong> The team must pay for "reasonable" actual expenses incurred in moving to the new home territory. This includes moving not more than **one (1) automobile** (or up to **two (2) automobiles if married**). To qualify, the player must consult the team in advance and furnish a written mover estimate within a reasonable time, giving the team 10 days to agree or make alternative arrangements.</li>
+                        <li><strong>Hotel Accommodations (Sec 1b):</strong> The team must pay for a road-comparable hotel room in the home city for up to **forty-six (46) days** following the assignment.</li>
+                        <li><strong>Housing Costs Reimbursement (Sec 1c):</strong> The team must reimburse the player's lease rent or mortgage expenses in the *former* city for up to **three (3) months** post-trade. This reimbursement is capped at **$6,000 per month** and is paid on a pro-rata basis if a full month is not involved. Satisfactory proof of payment and legal liability is required (Sec 1d).</li>
+                        <li><strong>Liability Mitigation (Sec 1e):</strong> To protect franchises, players without a permanent year-round local residence must use "best efforts" to obtain short-term leases, sublet allowances, or landlord agreements allowing the team to assume the lease upon a trade.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "meal-expenses-definition",
+                article: "Article III",
+                primaryKeyword: "meal allowances & road calculations",
+                keywords: ["meal expense", "meal allowance", "per diem", "road trips", "breakfast", "lunch", "dinner", "partial day", "home city", "travel expenses", "cpi", "75 miles"],
+                question: "How are player meal allowances and partial-day road trip expenses calculated?",
+                citation: "CBA Article III, Section 2",
+                answer: `
+                    <p>The daily meal allowance (per diem) covers players while "on the road" and features specific structural guidelines for adjustment and partial-day travel:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>Annual CPI Adjustment (Sec 2a):</strong> Began at **$156 per day** (2023-24). For subsequent seasons, this amount is adjusted by the percentage change in the national Consumer Price Index (CPI-U) from June 1 through May 31 immediately preceding the season, rounded to the nearest whole dollar.</li>
+                        <li><strong>Meal Splits:</strong> Daily per diems are mathematically distributed as follows:
+                            <ul class="list-none pl-4 mt-1 space-y-1 text-slate-600 font-mono text-[11px]">
+                                <li>• Breakfast = <strong>18%</strong> of daily allowance</li>
+                                <li>• Lunch = <strong>28%</strong> of daily allowance</li>
+                                <li>• Dinner = <strong>54%</strong> of daily allowance</li>
+                            </ul>
+                        </li>
+                        <li><strong>Partial-Day Road trip Deductions (Sec 2b):</strong> Allowance is docked based on team departure/arrival times:
+                            <ul class="list-none pl-4 mt-1 space-y-1">
+                                <li>• <em>No Breakfast</em> if departure is after 9:00 a.m. or arrival is before 7:00 a.m.</li>
+                                <li>• <em>No Lunch</em> if departure is after 1:00 p.m. or arrival is before 11:30 a.m.</li>
+                                <li>• <em>No Dinner</em> if departure is after 7:00 p.m. or arrival is before 5:30 p.m.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Home City Boundaries:</strong> Deemed to include the regular home court and any other venue played within **seventy-five (75) miles** of the team's primary facility.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "pension-benefits-rules",
+                article: "Article IV",
+                primaryKeyword: "pension benefits",
+                keywords: ["pension", "retirement", "age 62", "age 45", "monthly benefit", "$1,001.47", "credited service", "415", "irc", "benefits"],
+                question: "How are player pension benefits and retirement ages structured?",
+                citation: "CBA Article IV, Section 1(a)",
+                answer: `
+                    <p>The <strong>NBA Players' Pension Plan</strong> is designed to provide retirement security for eligible players. Under Article IV, the structural calculations and age limits include:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>Baseline Monthly Benefit:</strong> The monthly amount per Year of Credited Service payable as a Normal Retirement Pension is set at a baseline of <strong>$1,001.47</strong>.</li>
+                        <li><strong>Age Milestones (Effective Feb 2, 2024):</strong>
+                            <ul class="list-none pl-4 mt-1 space-y-1 text-slate-600">
+                                <li>• <strong>Normal Retirement Age:</strong> First day of the month following a player's <strong>62nd birthday</strong>.</li>
+                                <li>• <strong>Early Retirement Age:</strong> Permitted on or after the first day of the month following the player's <strong>45th birthday</strong>. Early pension amounts are adjusted as the actuarial equivalent of the Normal Retirement Pension.</li>
+                            </ul>
+                        </li>
+                        <li><strong>IRS Limitation Checks (Section 415):</strong> Neither monthly accruals nor final payments can exceed the maximum limits allowed under Internal Revenue Code Section 415. The annual maximum allowed by the IRS is divided by 120 to find the legal cap for monthly benefits.</li>
+                        <li><strong>Excess Benefit Protection (Pre-1965):</strong> Pre-1965 players and retirees receive dedicated pensions. Any portion capped by IRS Section 415 is paid through the NBA's specialized Excess Benefit Plan.</li>
+                        <li><strong>Bargaining over Non-Deductibility:</strong> If contributions to the Pension Plan cease to be tax-deductible, the Monthly Benefit may be adjusted, triggering a joint requirement for the NBA and NBPA to bargain in good faith for tax-equivalent alternative arrangements.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "two-way-pension-eligibility",
+                article: "Article IV",
+                primaryKeyword: "two-way pension eligibility",
+                keywords: ["two-way", "pension", "roster credit", "february 2nd", "feb 2", "credited service", "50% games"],
+                question: "How do Two-Way players qualify for roster credit under the Pension Plan?",
+                citation: "CBA Article IV, Section 1(b)",
+                answer: `
+                    <p>To support hybrid-roster players, the CBA outlines specific guidelines for **Two-Way Players** to earn credit under the Pension Plan. A Two-Way player is considered to be on an eligible roster for pension accumulation if they meet either of the following thresholds:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>The February 2nd Threshold:</strong> The player is active, inactive, or on the Two-Way list of any NBA franchise on <strong>February 2nd</strong> of that Regular Season.</li>
+                        <li><strong>The 50% Game Threshold:</strong> The player is on the Active List of any team for at least <strong>50% or more</strong> of the total Regular Season games played by that team during that season.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "post-career-income-plan",
+                article: "Article IV",
+                primaryKeyword: "post-career income plan",
+                keywords: ["post-career", "income plan", "pcip", "annuity", "annuities", "qualified plan", "non-qualified plan", "allocated share", "canadian resident", "withholding", "retroactive", "trustees"],
+                question: "How is the Post-Career Income Plan and its annuity benefits structured?",
+                citation: "CBA Article IV, Section 4(a)",
+                answer: `
+                    <p>The <strong>Post-Career Income Plan</strong> is designed to provide long-term financial security for retired players through specialized structured annuities, splitting benefits between tax-sheltered and non-sheltered vehicles:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>Dual-Plan Architecture:</strong> Benefits are distributed across two distinct legal frameworks:
+                            <ul class="list-none pl-4 mt-1 space-y-1 text-slate-600">
+                                <li>• <strong>The Qualified Plan:</strong> Subject to standard IRS tax exemptions.</li>
+                                <li>• <strong>The Non-Qualified Plan:</strong> Used for voluntary player elective deferrals and allocations exceeding IRS limits, subject to appropriate tax withholdings.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Allocated Share Calculation:</strong> The team contribution for each eligible player is computed using the following league-wide ratio:
+                        $$\\text{Allocated Share} = \\frac{\\text{Additional Benefit Amount}}{\\text{Total Eligible Players (Including Canadian Residents)}}$$
+                        Canadian residents are included in the denominator to preserve mathematical equity across all active rosters.</li>
+                        <li><strong>The Contribution Year:</strong> Defined as the annual window stretching from <strong>November 1 through October 31</strong>.</li>
+                        <li><strong>The No-Retroactive Reduction Protection:</strong> If the Board of Trustees (PCIP Trustees) discovers that an eligible player was mistakenly excluded from receiving their Allocated Share in a prior cycle, the missed allocation is paid retrospectively. To prevent penalizing other players, <strong>the cost is funded by the next season's Additional Benefit Amount</strong> (or future seasons if necessary) rather than forcing a retroactive clawback or reduction of existing player annuities.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "in-season-tournament-prize-rules",
+                article: "Article IV",
+                primaryKeyword: "in-season tournament prize pool",
+                keywords: ["in-season tournament", "ist", "ist prize", "nba cup", "bri growth factor", "contract weights", "two-way contract", "10-day contract", "quarterfinals", "semifinals", "finals", "prize pool", "payout"],
+                question: "How are In-Season Tournament (IST / NBA Cup) prize pools and 1/2 game contract weights calculated?",
+                citation: "CBA Article IV, Section 6(d)",
+                answer: `
+                    <p>The <strong>In-Season Tournament (NBA Cup) Prize Pool</strong> pays out cash awards to players advancing to the knockout stages. Prizes are scaled annually by the league-wide BRI Growth Factor:</p>
+                    
+                    <div class="bg-slate-100 p-3 rounded-xl text-center my-3 border border-slate-200">
+                        <span class="text-[10px] font-bold uppercase text-slate-500 block mb-1">BRI Growth Factor Formula</span>
+                        <div class="font-mono text-xs text-brand-blue font-bold">
+                            $$\\text{BRI Growth Factor} = \\frac{\\text{BRI}_{\\text{Previous Year}}}{\\text{BRI}_{2022-23}}$$
+                        </div>
+                    </div>
+
+                    <p><strong>Base Prize Scales (2023-24 Baseline):</strong></p>
+                    <ul class="list-disc pl-5 mt-1 space-y-1 text-slate-700">
+                        <li><strong>Wins IST Finals Game:</strong> $500,000</li>
+                        <li><strong>Loses IST Finals Game:</strong> $200,000</li>
+                        <li><strong>Loses Semifinals Game:</strong> $100,000</li>
+                        <li><strong>Loses Quarterfinals Game:</strong> $50,000</li>
+                    </ul>
+
+                    <p class="mt-3"><strong>The Active List / Pro-Rata Share Formula:</strong></p>
+                    <p class="text-xs text-slate-600 mb-2">To receive their full prize, an 'IST Player' (rostered on at least one knockout game) has their award scaled based on active availability during knockout games:</p>
+                    
+                    <div class="bg-slate-100 p-3 rounded-xl text-center my-2 border border-slate-200">
+                        <div class="font-mono text-xs text-brand-blue font-bold">
+                            $$\\text{IST Payout} = \\text{Base Prize} \\times \\text{BRI Growth Factor} \\times \\left( \\frac{\\text{Knockout Games on Roster Active/Inactive List}}{\\text{Total Knockout Games Played by Team}} \\right)$$
+                        </div>
+                    </div>
+
+                    <p class="mt-3"><strong>The 1/2 Game Two-Way & 10-Day Contract Weight:</strong></p>
+                    <p class="text-xs text-slate-600">Under Section 6(d)(1), a knockout stage game where a player was on the roster under a <strong>Two-Way Contract</strong> or a <strong>10-Day Contract</strong> counts as exactly <span class="font-bold text-amber-600 font-mono">one-half (0.5)</span> of a knockout game. For example, if a Two-Way player is on the champion's active list for all 4 knockout games, the fraction's numerator is 2, giving them exactly 50% ($250,000$) of the standard full payout.</p>
+                `
+            },
+            {
+                id: "additional-player-benefits",
+                article: "Article IV",
+                primaryKeyword: "additional player benefits",
+                keywords: ["workers' compensation", "workers comp", "high school basketball camp", "playoff pool", "player playoff pool", "benefits", "camp funding", "16 teams", "$615,000", "pool calculation", "payroll taxes", "accountants fees", "drug program", "anti-drug", "minimum player salary benefit", "reimbursement fund", "legacy fund", "erisa", "partner forums"],
+                question: "What are the comprehensive rules for Additional Player Benefits (Section 6, Subsections a-k)?",
+                citation: "CBA Article IV, Section 6",
+                answer: `
+                    <p>Under <strong>Article IV, Section 6</strong>, the NBA is legally required to fund a comprehensive list of auxiliary financial benefits, tournament pools, development opportunities, and league-wide matching schemes for both standard and hybrid contracts:</p>
+                    
+                    <div class="space-y-4 mt-3">
+                        <div class="border-l-2 border-brand-blue pl-3">
+                            <strong class="text-slate-800 text-xs uppercase tracking-wider block">(a) Workers’ Compensation Benefits</strong>
+                            <p class="text-xs text-slate-600">Full statutory workers' compensation insurance coverage must be sustained in accordance with local state and provincial laws, explicitly extending protections to both standard players and hybrid <strong>Two-Way Players</strong>.</p>
+                        </div>
+
+                        <div class="border-l-2 border-brand-blue pl-3">
+                            <strong class="text-slate-800 text-xs uppercase tracking-wider block">(b) Players Association High School Basketball Camp</strong>
+                            <p class="text-xs text-slate-600">The league guarantees baseline funding for the annual NBPA High School Basketball Camp (or equivalent program). Beginning at a base of <strong>$1,595,792 for the 2023-24 Season</strong>, this amount escalates compounding by <strong>7.5% per season</strong>:</p>
+                            <p class="text-xs font-mono text-brand-blue mt-1">$$\\text{Camp Funding}_{2026-27} = \\$1,595,792 \\times (1.075)^3 \\approx \\$1,982,447$$</p>
+                        </div>
+
+                        <div class="border-l-2 border-brand-blue pl-3">
+                            <strong class="text-slate-800 text-xs uppercase tracking-wider block">(c) Player Playoff Pool & Staff Sharing Restrictions</strong>
+                            <p class="text-xs text-slate-600">The postseason pool is distributed among playoff-qualifying teams. It is calculated dynamically as the greater of:</p>
+                            <p class="text-xs font-mono text-brand-blue mt-1">$$\\text{Playoff Pool Base} = \\max\\left( \\$31,014,350 \\times \\frac{\\text{BRI}_{\\text{Previous Year}}}{\\text{BRI}_{2021-22}}, \\text{Playoff Pool}_{\\text{Previous Year}} \\right)$$</p>
+                            <ul class="list-disc pl-5 mt-1 text-xs text-slate-600 space-y-1">
+                                <li><strong>(c)(1) Playoff Expansion Trigger:</strong> If the league expands the postseason above 16 teams, the total pool increases by exactly <strong>$615,000 for each additional franchise</strong>.</li>
+                                <li><strong>(c)(2) NBPA Consultation:</strong> The NBA must consult annually with the Players Association to approve mathematical formulas allocating playoff shares.</li>
+                                <li><strong>(c)(3) The 5% Staff Gift Ceiling:</strong> To enforce strict financial boundaries, players are prohibited from sharing postseason pool money with Team personnel (coaches, trainers, equipment managers, etc.) in an amount exceeding <strong>5% of the total pool amount received by the roster, collectively</strong>.</li>
+                            </ul>
+                        </div>
+
+                        <div class="border-l-2 border-brand-blue pl-3">
+                            <strong class="text-slate-800 text-xs uppercase tracking-wider block">(d) In-Season Tournament (IST) Prize Pool & Contract Weights</strong>
+                            <p class="text-xs text-slate-600">The NBA Cup Prize Pool pays out cash awards to players advancing to the knockout stages. Prizes are scaled annually by the league-wide BRI Growth Factor:</p>
+                            <p class="text-xs font-mono text-brand-blue mt-1">$$\\text{BRI Growth Factor} = \\frac{\\text{BRI}_{\\text{Previous Year}}}{\\text{BRI}_{2022-23}}$$</p>
+                            <p class="text-xs text-slate-600 mt-1"><strong>The Base Prize Scales (2023-24 baseline before Growth Factor multiplier):</strong></p>
+                            <ul class="list-disc pl-5 text-xs text-slate-600 space-y-0.5">
+                                <li>• <strong>Wins IST Finals Game:</strong> $500,000</li>
+                                <li>• <strong>Loses IST Finals Game:</strong> $200,000</li>
+                                <li>• <strong>Loses Semifinals Game:</strong> $100,000</li>
+                                <li>• <strong>Loses Quarterfinals Game:</strong> $50,000</li>
+                            </ul>
+                            <p class="text-xs text-slate-600 mt-1"><strong>The Active List / Pro-Rata Share Formula:</strong> To receive their full prize, an "IST Player" (rostered on at least one knockout game) has their award scaled based on active availability:</p>
+                            <p class="text-xs font-mono text-brand-blue">$$\\text{IST Payout} = \\text{Base Prize} \\times \\text{BRI Growth Factor} \\times \\left( \\frac{\\text{Knockout Games on Roster Active/Inactive List}}{\\text{Total Knockout Games Played by Team}} \\right)$$</p>
+                            <p class="text-xs text-slate-600 mt-1"><strong>The 1/2 Game Two-Way & 10-Day Contract Weight:</strong> Under Section 6(d)(1), a knockout stage game where a player was on the roster under a Two-Way Contract or a 10-Day Contract counts as exactly <strong>one-half (0.5)</strong> of a knockout game. For example, if a Two-Way player is on the champion's active list for all 4 knockout games, the fraction's numerator is 2, giving them exactly 50% ($250,000$) of the standard payout.</p>
+                        </div>
+
+                        <div class="border-l-2 border-brand-blue pl-3">
+                            <strong class="text-slate-800 text-xs uppercase tracking-wider block">(e) Employer's Portion of Payroll Taxes</strong>
+                            <p class="text-xs text-slate-600">The league-wide system covers the employer's portion of federal, state, and local payroll taxes associated with player compensation programs.</p>
+                        </div>
+
+                        <div class="border-l-2 border-brand-blue pl-3">
+                            <strong class="text-slate-800 text-xs uppercase tracking-wider block">(f) Accountants, Audits & TV Expert Costs</strong>
+                            <p class="text-xs text-slate-600">Guarantees joint funding for professional auditing and media valuations, specifically splitting the NBPA's 50% share of fees for official Accountants and chosen TV Experts when calculating BRI splits.</p>
+                        </div>
+
+                        <div class="border-l-2 border-brand-blue pl-3">
+                            <strong class="text-slate-800 text-xs uppercase tracking-wider block">(g) Anti-Drug Program</strong>
+                            <p class="text-xs text-slate-600">Fully funds the Players Association's designated share of operational costs for the league's comprehensive Anti-Drug Program, as outlined in Article XXXIII.</p>
+                        </div>
+
+                        <div class="border-l-2 border-brand-blue pl-3">
+                            <strong class="text-slate-800 text-xs uppercase tracking-wider block">(h) The Minimum Player Salary Reimbursement Benefit</strong>
+                            <p class="text-xs text-slate-600">To prevent teams from discriminating against experienced veterans in favor of cheaper rookies, the league maintains a centralized fund. When a team signs a player with <strong>3 or more Years of Service</strong> to a 1-year, 10-day, or Rest-of-Season minimum contract, the team is reimbursed for the difference:</p>
+                            <p class="text-xs font-mono text-brand-blue mt-1">$$\\text{Reimbursement Fund Payout} = \\text{Minimum Salary}_{\\text{YOS} \\ge 3} - \\text{Minimum Salary}_{\\text{YOS} = 2}$$</p>
+                            <p class="text-xs text-slate-600 mt-1">The player receives their full scale minimum, but the team's salary cap ledger and actual cash payout only count at the cheaper **2-Year Service minimum** ($2,431,617$ pro-rata in 2026-27). The rest is paid back from the League-wide fund at the end of the season.</p>
+                        </div>
+
+                        <div class="border-l-2 border-brand-blue pl-3">
+                            <strong class="text-slate-800 text-xs uppercase tracking-wider block">(i) NBA Players Legacy Fund</strong>
+                            <p class="text-xs text-slate-600">Provides continuous support for retired players. The league covers exactly **one-half of the annual $1.5 million funding** ($750,000/yr) of the joint NBA/NBPA Legacy Fund.</p>
+                        </div>
+
+                        <div class="border-l-2 border-brand-blue pl-3">
+                            <strong class="text-slate-800 text-xs uppercase tracking-wider block">(j) Pension Plan Legal Compliance (ERISA/Code)</strong>
+                            <p class="text-xs text-slate-600">Guarantees mandatory financial adjustments to cover any pension liabilities triggered by federal regulatory changes in ERISA or the Internal Revenue Code.</p>
+                        </div>
+
+                        <div class="border-l-2 border-brand-blue pl-3">
+                            <strong class="text-slate-800 text-xs uppercase tracking-wider block">(k) Partner Forums & Career Exposure Travel</strong>
+                            <p class="text-xs text-slate-600">Provides professional development and career exposure by paying travel, lodging, and access fees for current and former players attending exclusive partner and investment forums.</p>
+                        </div>
+                    </div>
+                `
+            },
+            /* --- ARTICLE VI: PLAYER CONDUCT ADDITIONS --- */
+            {
+                id: "missed-games-salary-deductions",
+                article: "Article VI",
+                primaryKeyword: "missed games salary deductions",
+                keywords: ["missed game", "salary deduction", "holdout", "suspension deduction", "1/91.6", "1/145", "1/110", "game fine", "pay loss", "unexcused absence"],
+                question: "How are base salary deductions calculated for missed games, holdouts, and suspensions?",
+                citation: "CBA Article VI, Section 1",
+                answer: `
+                    <p>When a player fails or refuses to play without proper cause, or is suspended, their Base Compensation is docked using exact CBA formulas:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-2 text-slate-700">
+                        <li><strong>Unexcused Failure / Holdout (Sec 1a(i)):</strong> Refusal to render services reduces base compensation by <strong>1/91.6th</strong> for each missed exhibition, regular season, play-in, or playoff game:
+                            <div class="bg-slate-100 p-2.5 rounded-lg my-1 font-mono text-xs text-brand-blue">
+                                $$\\text{Salary Deduction} = \\text{Base Compensation} \\times \\left(\\frac{1}{91.6}\\right) \\quad \\text{per game}$$
+                            </div>
+                        </li>
+                        <li><strong>Suspensions Under 20 Games (Sec 1a(ii)):</strong> Suspensions for reasons other than refusal to play reduce base pay by <strong>1/145th</strong> per game:
+                            <div class="bg-slate-100 p-2.5 rounded-lg my-1 font-mono text-xs text-brand-blue">
+                                $$\\text{Salary Deduction} = \\text{Base Compensation} \\times \\left(\\frac{1}{145}\\right) \\quad \\text{per game}$$
+                            </div>
+                        </li>
+                        <li><strong>Suspensions 20+ Games or Indefinite (Sec 1a(ii)):</strong> Long-term suspensions reduce base pay by <strong>1/110th</strong> per game:
+                            <div class="bg-slate-100 p-2.5 rounded-lg my-1 font-mono text-xs text-brand-blue">
+                                $$\\text{Salary Deduction} = \\text{Base Compensation} \\times \\left(\\frac{1}{110}\\right) \\quad \\text{per game}$$
+                            </div>
+                        </li>
+                        <li><strong>1-Game On-Court Suspensions (Sec 1b):</strong> For the first 1-game on-court suspension of a season, the deduction equals:
+                            <div class="bg-slate-100 p-2.5 rounded-lg my-1 font-mono text-xs text-brand-blue">
+                                $$\\text{Deduction} = \\text{Base Compensation} \\times \\left(\\frac{1}{\\text{Days in Regular Season}}\\right)$$
+                            </div>
+                        </li>
+                        <li><strong>Free Agent Suspensions (Sec 1c):</strong> Unserved games carry over to free agency and are deemed served at a 1.5x multiplier relative to games played by their former team before signing.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "practice-and-mandatory-program-fines",
+                article: "Article VI",
+                primaryKeyword: "practice and mandatory program fines",
+                keywords: ["practice fine", "missed practice", "promotional appearance fine", "rookie transition program", "anti-gambling training", "media training", "business of basketball", "fines"],
+                question: "What are the baseline fines for missed practices, media sessions, and mandatory training programs?",
+                citation: "CBA Article VI, Sections 2-5",
+                answer: `
+                    <p>Section 2 through 5 establishes explicit dollar fines for missing mandatory team and league obligations without reasonable cause:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5 text-slate-700">
+                        <li><strong>Missed Practices (Sec 2a):</strong>
+                            <ul class="list-none pl-4 space-y-0.5 text-xs">
+                                <li>• 1st Missed Practice: <strong>$2,500 fine</strong></li>
+                                <li>• 2nd Missed Practice: <strong>$5,000 fine</strong></li>
+                                <li>• 3rd Missed Practice: <strong>$7,500 fine</strong></li>
+                                <li>• 4th+ Missed Practice: Subject to reasonable additional team discipline.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Promotional Appearances (Sec 3):</strong> Unexcused absence from required promotional events = <strong>$20,000 fine</strong>.</li>
+                        <li><strong>Mandatory Educational Programs (Sec 4b):</strong>
+                            <ul class="list-none pl-4 space-y-0.5 text-xs">
+                                <li>• Missing Rookie Transition Program (RTP): <strong>5-Game Suspension</strong>.</li>
+                                <li>• Missing Team Awareness Meetings / Life Skills: <strong>$20,000 fine</strong>.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Media, Business & Anti-Gambling Training (Sec 5):</strong>
+                            <ul class="list-none pl-4 space-y-0.5 text-xs">
+                                <li>• Missing Media Training: <strong>$20,000 fine</strong>.</li>
+                                <li>• Missing Business of Basketball Program: <strong>$5,000 fine</strong> (Team Governors are also required to attend).</li>
+                                <li>• Missing Anti-Gambling Training Session: <strong>$100,000 fine</strong>.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                `
+            },
+            {
+                id: "off-court-conduct-and-firearms-rules",
+                article: "Article VI",
+                primaryKeyword: "off-court conduct and firearms rules",
+                keywords: ["firearms", "weapons", "guns", "unlawful violence", "felony conviction", "counseling", "driver license", "motor vehicle", "one penalty", "investigations", "charity fine split"],
+                question: "What are the rules regarding firearms, off-court violence, and team vs league discipline?",
+                citation: "CBA Article VI, Sections 6-14",
+                answer: `
+                    <p>Sections 6 through 14 outline strict off-court safety standards, weapon bans, and disciplinary procedures:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5 text-slate-700">
+                        <li><strong>Firearms & Deadly Weapons Ban (Sec 9):</strong> Possessing a firearm or deadly weapon of any kind at any NBA or team venue, practice facility, office, or while traveling on NBA-related business is strictly prohibited. Annual proof of valid firearm licensing and registration is mandatory.</li>
+                        <li><strong>Unlawful Violence Conviction (Sec 7):</strong> Conviction (or guilty/no-contest plea) for a violent felony results in an <strong>immediate minimum 10-game suspension</strong>.</li>
+                        <li><strong>Clinical Counseling (Sec 8):</strong> Players involved in violent conduct may be required to undergo clinical evaluation and up to 10 counseling sessions. Refusing or failing to attend within 72 hours of notice triggers a <strong>$10,000 per day fine</strong>.</li>
+                        <li><strong>The 'One Penalty' Rule (Sec 10):</strong> The NBA and a team cannot discipline a player for the same act. League disciplinary action supersedes team action. The NBA has 48 hours to rescind or prohibit team discipline to assume control.</li>
+                        <li><strong>Charitable Fine Remittance (Sec 6):</strong> 50% of collected fine money is remitted to the NBPA Foundation (or an approved 501(c)(3) charity) and 50% to an NBA-selected charity.</li>
+                        <li><strong>Motor Vehicle Compliance (Sec 14):</strong> Players must provide proof of a valid driver's license, vehicle registration, and insurance annually.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "public-trade-requests",
+                article: "Article VI",
+                primaryKeyword: "public trade requests",
+                keywords: ["trade request", "public trade demand", "demand trade", "trade fine", "$150,000", "trade suspension", "trade representative"],
+                question: "What are the penalties for publicly expressing a desire to be traded?",
+                citation: "CBA Article VI, Section 18",
+                answer: `
+                    <p>Under <strong>Article VI, Section 18</strong>, players and their representatives are explicitly restricted from making trade demands in public forums:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5 text-slate-700">
+                        <li><strong>The Prohibition:</strong> Any player (or player representative acting with authority) who publicly expresses a desire to be traded to another team is subject to league discipline.</li>
+                        <li><strong>Maximum Fine Ceiling:</strong> The maximum fine that can be imposed by the NBA for a public trade demand is <strong>$150,000</strong>, along with potential suspension.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "gaming-and-cannabis-investments",
+                article: "Article VI",
+                primaryKeyword: "gaming and cannabis investments",
+                keywords: ["gaming company", "sports betting", "fantasy sports", "cannabis", "cbd", "marijuana", "gambling equity", "1% limit", "endorsement"],
+                question: "What are the rules for player involvement with sports gaming and cannabis companies?",
+                citation: "CBA Article VI, Sections 19-20",
+                answer: `
+                    <p>Sections 19 and 20 outline clear commercial parameters for player investments and endorsements in sports betting, fantasy, and cannabis businesses:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5 text-slate-700">
+                        <li><strong>Sports Betting & Gaming Companies (Sec 19):</strong>
+                            <ul class="list-none pl-4 space-y-0.5 text-xs">
+                                <li>• <strong>Passive Equity Cap:</strong> Players may hold passive ownership under <strong>1%</strong> in entities facilitating NBA-related bets, and under 50% in entities offering non-NBA wagering.</li>
+                                <li>• <strong>Disclosures:</strong> Ownership must be disclosed to the League Office within 30 days.</li>
+                                <li>• <strong>No NBA Betting Promotion:</strong> Players can endorse general sports betting brands or non-NBA wagering, but are strictly barred from endorsing NBA-related bets or contests. Compensation cannot be tied to betting handle.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Cannabis & CBD Companies (Sec 20):</strong>
+                            <ul class="list-none pl-4 space-y-0.5 text-xs">
+                                <li>• <strong>CBD Products (THC ≤ 0.3%):</strong> Players can hold direct/indirect ownership and endorse CBD products provided the company doesn't sell Schedule I/II controlled substances.</li>
+                                <li>• <strong>Marijuana Companies:</strong> Players may hold passive ownership under 50%, but <strong>cannot endorse</strong> marijuana products without written approval from both the NBA and NBPA.</li>
+                                <li>• <strong>Venue Prohibition:</strong> Marijuana use remains prohibited at team or league facilities and venues.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                `
+            },
+            /* --- END ARTICLE VI ADDITIONS --- */
+            {
+                id: "poison-pill",
+                article: "Article VII",
+                primaryKeyword: "poison pill",
+                keywords: ["poison pill", "poisen", "gibet", "arenas", "offer sheet", "rfa", "restricted", "poisonpill", "poision"],
+                question: "What is a 'Poison Pill' contract provision and how is it traded?",
+                citation: "CBA Article VII, Section 8(a)",
+                answer: `
+                    <p>In the NBA salary cap structure, a <strong>Poison Pill</strong> contract happens in two situations, highly documented by front-office experts like Bobby Marks:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>The Rookie Extension Poison Pill:</strong> If a team extends a rookie scale contract (e.g., a 5-year maximum rookie extension) and then attempts to trade that player <em>before</em> the extension officially starts on July 1. For trade calculation matching, the outgoing player's value for the sending team is counted as the average of their current salary and their newly extended future salary. However, the receiving team counts them at the full, active expanded contract rate. This calculation disparity makes finding a legal trade partner mathematically difficult.</li>
+                        <li><strong>The Gilbert Arenas Provision (RFA):</strong> An opposing team designs a back-loaded offer sheet for a restricted free agent with a massive salary jump in Year 3 to make matching difficult for the original franchise under standard cap rules.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "second-apron",
+                article: "Article VII",
+                primaryKeyword: "second apron",
+                keywords: ["second apron", "apron 2", "aprin 2", "tax apron", "hard cap", "restrictions", "cash limit", "frozen pick", "$221.686m"],
+                question: "What are the strict roster restrictions for a team over the Second Apron?",
+                citation: "CBA Article VII, Section 2(f)",
+                answer: `
+                    <p>For the 2026-27 season, the <strong>Second Apron</strong> is set at <strong>$221.686 Million</strong>. Exceeding this threshold completely locks down a team's flexibility with aggressive penalties, widely analyzed by Keith Smith:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>No Salary Aggregation:</strong> You cannot combine two or more outgoing players' salaries to trade for a single incoming player. Every trade must be calculated as a 1-for-1 matching block.</li>
+                        <li><strong>100% Matching Limitation:</strong> You cannot take back a single dollar more than you send out in a trade.</li>
+                        <li><strong>No Cash:</strong> You are barred from sending any cash in trade deals (the league limit is up to ~$7M for other teams).</li>
+                        <li><strong>No Mid-Level Exception:</strong> You lose the Taxpayer Mid-Level Exception entirely.</li>
+                        <li><strong>Frozen Picks:</strong> The team's first-round draft selection 7 years out becomes frozen and cannot be traded.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "first-apron",
+                article: "Article VII",
+                primaryKeyword: "first apron",
+                keywords: ["first apron", "apron 1", "aprin 1", "matching rule", "buyouts", "tpe limit", "$209.015m"],
+                question: "How does the First Apron impact trade matching and buyout signings?",
+                citation: "CBA Article VII, Section 2(e)",
+                answer: `
+                    <p>The 2026-27 <strong>First Apron</strong> is set at <strong>$209.015 Million</strong>. Crossing it triggers limitations to limit high-spending runaways:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>Trade Matching Cap:</strong> First Apron teams can only absorb up to 110% of their outgoing salary in a trade (while teams below the aprons can absorb 125% + $250k).</li>
+                        <li><strong>No Buyout Signings:</strong> You cannot sign a player waived mid-season if their previous contract salary exceeded the Non-Taxpayer MLE ($15.044M).</li>
+                        <li><strong>No Traded Player Exceptions (TPE):</strong> You cannot use existing trade exceptions generated in prior years to absorb incoming players.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "bird-rights",
+                article: "Article VII",
+                primaryKeyword: "bird rights",
+                keywords: ["bird rights", "larry bird", "early bird", "non-bird", "bird rights rule", "free agency", "salary cap raise"],
+                question: "What is the difference between Full Bird, Early Bird, and Non-Bird Rights?",
+                citation: "CBA Article VII, Section 6",
+                answer: `
+                    <p><strong>Bird Rights</strong> allow teams to exceed the salary cap to re-sign their own free agents. They break down into three categories based on service time with a franchise without changing teams in free agency:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>Full Bird Rights (Larry Bird):</strong> Requires 3 seasons. Allows the team to sign the player to any salary up to their absolute maximum for up to 5 years, with 8% annual raises.</li>
+                        <li><strong>Early Bird Rights:</strong> Requires 2 seasons. Allows the team to offer a starting salary of either 175% of their previous year's salary, or 105% of the league's average salary, whichever is greater.</li>
+                        <li><strong>Non-Bird Rights:</strong> Requires 1 season. Allows the team to offer up to 120% of the player's previous year's salary or 120% of the league minimum.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "mid-level-exception",
+                article: "Article VII",
+                primaryKeyword: "mid-level exceptions",
+                keywords: ["mle", "midlevel", "mid-level exception", "room exception", "taxpayer mid-level", "$15.044m", "$9.366m", "$6.064m"],
+                question: "What are the Mid-Level Exception (MLE) tiers and values for 2026-27?",
+                citation: "CBA Article VII, Section 2(c)",
+                answer: `
+                    <p>The <strong>Mid-Level Exception (MLE)</strong> is an annual exception given to teams to sign free agents without utilizing cap space. Its value depends entirely on a team's total salary position:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>Non-Taxpayer MLE ($15.044 Million):</strong> Available for teams over the cap but below the First Apron. Contract length up to 4 years. Utilizing this exception triggers a <strong>hard cap</strong> at the First Apron for that entire league year.</li>
+                        <li><strong>Room MLE ($9.366 Million):</strong> Available only to teams that utilize cap space below the cap, stripping their other exceptions. Contract length up to 3 years.</li>
+                        <li><strong>Taxpayer MLE ($6.064 Million):</strong> Available for teams above the First Apron but below the Second Apron. Contract length up to 2 years. Using this triggers a <strong>hard cap</strong> at the Second Apron.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "stepien-rule",
+                article: "Article X",
+                primaryKeyword: "stepien rule",
+                keywords: ["stepien", "stepan", "stepian", "pick", "consecutive", "draft picks", "first round", "swaps", "7 years"],
+                question: "How does the Stepien Rule limit trading future 1st round picks?",
+                citation: "CBA Article X, Section 7",
+                answer: `
+                    <p>Named after the former Cavaliers owner Ted Stepien, the <strong>Stepien Rule</strong> dictates that no team can execute a transaction that deprives them of their future first-round draft selections in consecutive drafts.</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>Consecutive Year Limit:</strong> A franchise must possess at least one future first-round pick in every other draft class on a rolling basis.</li>
+                        <li><strong>Future Pick Swaps:</strong> Pick swaps are fully legal in consecutive years, because the team is guaranteed to receive at least one first-round selection on draft night (even if it's the less favorable option of the swap).</li>
+                        <li><strong>Seven-Year Rule:</strong> You cannot trade a pick further than 7 years into the future. For the 2026-27 season, the furthest available pick is the 2033 first-rounder.</li>
+                    </ul>
+                `
+            },
+            {
+                id: "sign-and-trade",
+                article: "Article VII",
+                primaryKeyword: "sign and trade",
+                keywords: ["sign and trade", "sign-and-trade", "snt", "sign & trade", "byc", "base year compensation", "hard cap", "first apron"],
+                question: "How do Sign-and-Trade (SNT) rules and Apron restrictions work?",
+                citation: "CBA Article VII, Section 8(e)",
+                answer: `
+                    <p>A <strong>Sign-and-Trade (SNT)</strong> transaction allows a team to re-sign their own free agent and immediately trade them to another franchise. This is a vital mechanism for cap-strapped teams, but it triggers severe 2026-27 CBA restrictions:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1.5">
+                        <li><strong>The First Apron Hard Cap Trigger:</strong> Any team that acquires a player via a sign-and-trade is immediately <strong>hard-capped at the First Apron ($209.015 Million)</strong> for that entire season. If a team's total payroll already exceeds the First Apron, they are legally prohibited from acquiring a player via SNT.</li>
+                        <li><strong>Contract Requirements:</strong> The sign-and-trade contract must be for exactly <strong>3 or 4 seasons</strong> (excluding option years). Only the first season must be fully guaranteed, but the deal cannot be signed using any exception that has less than a 3-year term.</li>
+                        <li><strong>Base Year Compensation (BYC):</strong> To prevent teams from over-inflating salaries just to match trade values, BYC applies to the outgoing player if the team is over the cap, the player gets a raise greater than 20%, and their salary is above the Non-Taxpayer MLE ($15.044M). For trade matching:
+                            <ul class="list-none pl-4 mt-1 space-y-1">
+                                <li>• <strong>Sending Team:</strong> Counts the player's outgoing salary as the greater of their previous year's salary or 50% of their new salary.</li>
+                                <li>• <strong>Receiving Team:</strong> Counts the player's incoming salary at 100% of the new contract value.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Roster Eligibility:</strong> The player must have finished the preceding season on the roster of the sending team (retaining Bird or Early Bird rights).</li>
+                    </ul>
+                `
+            }
+        ];
+
+        // Utility to compute structural Levenshtein edit distance between strings
+        function computeLevenshteinDistance(a, b) {
+            const tmp = [];
+            let i, j;
+            if (a.length === 0) return b.length;
+            if (b.length === 0) return a.length;
+            for (i = 0; i <= b.length; i++) tmp[i] = [i];
+            for (j = 0; j <= a.length; j++) tmp[0][j] = j;
+            for (i = 1; i <= b.length; i++) {
+                for (j = 1; j <= a.length; j++) {
+                    tmp[i][j] = b.charAt(i - 1) === a.charAt(j - 1) 
+                        ? tmp[i - 1][j - 1] 
+                        : Math.min(tmp[i - 1][j - 1] + 1, tmp[i][j - 1] + 1, tmp[i - 1][j] + 1);
+                }
+            }
+            return tmp[b.length][a.length];
+        }
+
+        // Resolves user keywords using edit distance to tolerate typos and human errors
+        function getFuzzyBestMatch(inputQuery) {
+            const queryClean = inputQuery.toLowerCase().trim();
+            if (queryClean.length < 2) return null;
+
+            const queryWords = queryClean.split(/\s+/).filter(w => w.length > 1);
+            if (queryWords.length === 0) return null;
+
+            let highestScore = 0;
+            let bestMatchingItem = null;
+
+            QUESTION_DATABASE.forEach(item => {
+                let currentScore = 0;
+                
+                if (item.question.toLowerCase().includes(queryClean)) {
+                    currentScore += 100;
+                }
+
+                queryWords.forEach(word => {
+                    item.keywords.forEach(keyword => {
+                        const kw = keyword.toLowerCase();
+                        if (kw === word) {
+                            currentScore += 40; 
+                        } else if (kw.includes(word) || word.includes(kw)) {
+                            currentScore += 20; 
+                        } else {
+                            const distance = computeLevenshteinDistance(word, kw);
+                            const maxDist = Math.min(2, Math.floor(kw.length / 3));
+                            if (distance <= maxDist) {
+                                currentScore += (25 - distance * 8); 
+                            }
+                        }
+                    });
+                });
+
+                if (currentScore > highestScore) {
+                    highestScore = currentScore;
+                    bestMatchingItem = item;
+                }
+            });
+
+            return highestScore >= 15 ? bestMatchingItem : null;
+        }
+
+        // Detailed inputs mapping specifically to 2026-27 CBA figures
+        const CAP_STATUSES_DATA = [
+            { id: "under-cap", label: "Under Salary Cap", subtitle: "< $164.961M", icon: "trending_down" },
+            { id: "over-cap", label: "Over Cap (Under Apron)", subtitle: "$164.961M - $209.015M", icon: "swap_horiz" },
+            { id: "first-apron", label: "Above First Apron", subtitle: "$209.015M - $221.686M", icon: "warning" },
+            { id: "second-apron", label: "Above Second Apron", subtitle: "> $221.686M", icon: "gavel" }
+        ];
+
+        const TRANS_ACTIONS_DATA = [
+            { id: "aggregate", label: "Aggregate multiple player salaries", desc: "Combining multiple players to match a single incoming salary." },
+            { id: "more-salary", label: "Take back more salary than sent out", desc: "Absorbing contract values that exceed standard matching ratios." },
+            { id: "send-cash", label: "Send cash to facilitate a trade", desc: "Using direct financial cash payouts to make deals work." },
+            { id: "trade-7yr-pick", label: "Trade a first-round draft pick 7 years out", desc: "Trading a 2033 pick (furthest possible draft class)." }
+        ];
+
+        const VALIDATION_RULES_MATRIX = {
+            "under-cap": {
+                "aggregate": { allowed: true, text: "Teams under the salary cap have total unrestricted freedom to aggregate salaries to target an incoming contract. They are not restricted by apron guidelines." },
+                "more-salary": { allowed: true, text: "Allowed. Cap space can be directly utilized to absorb any larger contract up to the exact limit of the available cap room plus the Room MLE ($9.366M)." },
+                "send-cash": { allowed: true, text: "Allowed. Teams can send up to the league's maximum annual cash limit (~$7M in 2026-27) to finalize transactions." },
+                "trade-7yr-pick": { allowed: true, text: "Allowed, assuming the Stepien Rule is satisfied (you must maintain first-round picks in consecutive upcoming seasons)." }
+            },
+            "over-cap": {
+                "aggregate": { allowed: true, text: "Allowed. Teams over the cap but below the aprons can freely aggregate outgoing salaries to meet incoming trade matching thresholds." },
+                "more-salary": { allowed: true, text: "Allowed. Under non-taxpayer matching guidelines, you can take back up to 125% of your outgoing salary plus $250,000 to complete the trade." },
+                "send-cash": { allowed: true, text: "Allowed. Non-taxpayer teams are permitted to utilize standard cash limits in all trade packages." },
+                "trade-7yr-pick": { allowed: true, text: "Allowed, subject to the standard Stepien Rule (cannot be without a first-round pick in consecutive drafts)." }
+            },
+            "first-apron": {
+                "aggregate": { allowed: true, text: "Allowed, but heavily restricted. First Apron teams are allowed to aggregate outgoing salaries, but the incoming trade salary matching ratio is capped at a strict 110% (down from 125%)." },
+                "more-salary": { allowed: false, text: "Prohibited. Teams above the First Apron are strictly forbidden from taking back even a single dollar more than they send out. Salary matching must be 100% equivalent or less." },
+                "send-cash": { allowed: true, text: "Allowed. First Apron teams retain the legal right to send out cash up to the standard annual league limit." },
+                "trade-7yr-pick": { allowed: true, text: "Allowed. The pick is eligible to be traded, subject to standard Stepien rule checks." }
+            },
+            "second-apron": {
+                "aggregate": { allowed: false, text: "Prohibited. Under 2026-27 guidelines, Second Apron teams cannot aggregate two or more outgoing salaries to match a larger single contract. All trades must be structured strictly as 1-for-1 player blocks." },
+                "more-salary": { allowed: false, text: "Prohibited. Second Apron teams cannot take back more salary in any deal. Trade math is strictly capped at a 100% matching ratio." },
+                "send-cash": { allowed: false, text: "Prohibited. As a major financial penalty, Second Apron teams are completely barred from sending any cash in any transaction." },
+                "trade-7yr-pick": { allowed: false, text: "Prohibited. The moment a team finishes above the Second Apron, their first-round draft selection 7 years out (2033 draft pick) is frozen and cannot be traded under any circumstances." }
+            }
+        };
+
+        // Interactive UI state trackers
+        let activeStatus = "under-cap";
+        let activeAction = "aggregate";
+        const openedFolders = new Set(); // Start with all folders folded (collapsed) by default
+
+        // Handles QA Section Tab Changes
+        function switchQATab(tab) {
+            const searchInterface = document.getElementById("qa-search-interface");
+            const glossaryInterface = document.getElementById("qa-glossary-interface");
+            const searchBtn = document.getElementById("tab-search-btn");
+            const glossaryBtn = document.getElementById("tab-glossary-btn");
+
+            if (tab === "search") {
+                searchInterface.classList.remove("hidden");
+                glossaryInterface.classList.add("hidden");
+                
+                searchBtn.className = "py-3 px-4 text-xs sm:text-sm font-bold text-brand-blue border-b-2 border-brand-blue -mb-px transition-all flex items-center gap-1.5";
+                glossaryBtn.className = "py-3 px-4 text-xs sm:text-sm font-semibold text-brand-textMuted border-b-2 border-transparent -mb-px hover:text-brand-textDark transition-all flex items-center gap-1.5";
             } else {
-                rules[i].classList.add('hidden');
+                searchInterface.classList.add("hidden");
+                glossaryInterface.classList.remove("hidden");
+
+                glossaryBtn.className = "py-3 px-4 text-xs sm:text-sm font-bold text-brand-blue border-b-2 border-brand-blue -mb-px transition-all flex items-center gap-1.5";
+                searchBtn.className = "py-3 px-4 text-xs sm:text-sm font-semibold text-brand-textMuted border-b-2 border-transparent -mb-px hover:text-brand-textDark transition-all flex items-center gap-1.5";
+                openedFolders.clear(); // Fold all articles when clicking the tab
+                renderGlossaryFolders();
             }
         }
-    }
-</script>
 
+        // Toggles folder visibility in the directory UI
+        function toggleFolder(articleId) {
+            if (openedFolders.has(articleId)) {
+                openedFolders.delete(articleId);
+            } else {
+                openedFolders.add(articleId);
+            }
+            renderGlossaryFolders();
+        }
+
+        // Dynamically populates the directory system with structured folders
+        function renderGlossaryFolders() {
+            const stack = document.getElementById("glossary-folders-stack");
+            stack.innerHTML = "";
+
+            // Group our definitions into designated structural folders chronologically
+            const articles = [
+                { id: "Article I", title: "Article I: General Definitions & Revenue", desc: "Core baseline terminologies, BRI splits, and service metrics." },
+                { id: "Article II", title: "Article II: Roster Regulations, UPC, & Exhibits", desc: "Contract amendments, allowable guarantees, Exhibit 9 & 10 rules." },
+                { id: "Article III", title: "Article III: Player Expenses & Relocations", desc: "Moving expenses, lodging (46 days), housing rent caps ($6,000/mo), and meal per diems." },
+                { id: "Article IV", title: "Article IV: Player Benefits & Pensions", desc: "Pension systems, early retirement age metrics, IST prize rules, and Two-Way credentials." },
+                { id: "Article VI", title: "Article VI: Player Conduct & Discipline", desc: "Practice fines, missed game salary deductions, firearms bans, public trade requests, gaming/cannabis." },
+                { id: "Article VII", title: "Article VII: Salary Cap & Exception Allocations", desc: "Mid-level exceptions, bird rights, aprons, and matching criteria." },
+                { id: "Article X", title: "Article X: Player Draft & Trade Limits", desc: "Draft selections, eligibility, and the Stepien pick rule." }
+            ];
+
+            articles.forEach(art => {
+                const isExpanded = openedFolders.has(art.id);
+                const itemsInArticle = QUESTION_DATABASE.filter(item => item.article === art.id);
+                
+                const folderWrapper = document.createElement("div");
+                folderWrapper.className = "border border-slate-200 rounded-2xl bg-white shadow-sm overflow-hidden transition-all";
+
+                // Folder Header
+                const folderHeader = document.createElement("button");
+                folderHeader.onclick = () => toggleFolder(art.id);
+                folderHeader.className = "w-full p-4 flex items-center justify-between text-left bg-slate-50/50 hover:bg-slate-50 transition-all border-b border-transparent";
+                if (isExpanded) {
+                    folderHeader.classList.remove("border-transparent");
+                    folderHeader.classList.add("border-slate-100");
+                }
+
+                folderHeader.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="material-icons ${isExpanded ? 'text-amber-500' : 'text-slate-400'} text-2xl">
+                            ${isExpanded ? 'folder_open' : 'folder'}
+                        </span>
+                        <div>
+                            <h4 class="font-extrabold text-xs sm:text-sm text-brand-textDark">${art.title}</h4>
+                            <p class="text-[11px] text-brand-textMuted">${art.desc}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] bg-slate-200/80 text-brand-textDark font-bold px-2 py-0.5 rounded-full font-mono">${itemsInArticle.length} Rules</span>
+                        <span class="material-icons text-brand-textMuted transition-transform ${isExpanded ? 'rotate-180' : ''}">expand_more</span>
+                    </div>
+                `;
+
+                // Sub-items Grid Inside Folder
+                const folderContent = document.createElement("div");
+                folderContent.className = isExpanded ? "p-4 bg-white block" : "hidden";
+
+                if (isExpanded) {
+                    if (itemsInArticle.length === 0) {
+                        folderContent.innerHTML = `<p class="text-xs text-brand-textMuted italic">No paraphrased rules registered in this article.</p>`;
+                    } else {
+                        const grid = document.createElement("div");
+                        grid.className = "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3";
+
+                        itemsInArticle.forEach(item => {
+                            const card = document.createElement("button");
+                            card.className = "p-4 rounded-xl border border-slate-200 bg-slate-50/40 text-left hover:border-brand-blue hover:bg-blue-50/10 transition-all duration-200 flex flex-col justify-between h-36 group shadow-sm";
+                            card.onclick = () => {
+                                simulateCompute(item);
+                            };
+
+                            card.innerHTML = `
+                                <div class="space-y-1">
+                                    <span class="text-[10px] font-black text-brand-blue uppercase tracking-wider font-mono block">${item.citation}</span>
+                                    <h4 class="font-bold text-xs sm:text-sm text-brand-textDark group-hover:text-brand-blue transition-colors line-clamp-2">${item.primaryKeyword.toUpperCase()}</h4>
+                                </div>
+                                <span class="text-[10px] text-brand-textMuted flex items-center gap-1 group-hover:text-brand-blue font-bold tracking-tight mt-2">
+                                    Analyze Rule <span class="material-icons text-xs">arrow_forward</span>
+                                </span>
+                            `;
+                            grid.appendChild(card);
+                        });
+                        folderContent.appendChild(grid);
+                    }
+                }
+
+                folderWrapper.appendChild(folderHeader);
+                folderWrapper.appendChild(folderContent);
+                stack.appendChild(folderWrapper);
+            });
+        }
+
+        // Initial setup on window load
+        window.onload = function() {
+            renderCapTiers();
+            renderTradeActions();
+            renderQAChips();
+            updateAuditReport();
+        };
+
+        // Render cap position buttons
+        function renderCapTiers() {
+            const container = document.getElementById("cap-status-options-grid");
+            container.innerHTML = "";
+            CAP_STATUSES_DATA.forEach(status => {
+                const btn = document.createElement("button");
+                const isActive = activeStatus === status.id;
+                
+                btn.className = `p-4.5 rounded-2xl border text-left flex flex-col gap-1 transition-all duration-200 ${
+                    isActive 
+                        ? 'border-brand-blue bg-blue-50/50 text-brand-textDark shadow-sm' 
+                        : 'border-slate-200 bg-white text-brand-textMuted hover:border-slate-400 hover:text-brand-textDark'
+                }`;
+                btn.onclick = () => {
+                    activeStatus = status.id;
+                    renderCapTiers();
+                    updateAuditReport();
+                };
+                
+                btn.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <span class="material-icons ${isActive ? 'text-brand-blue' : 'text-slate-400'}">${status.icon}</span>
+                        <span class="font-extrabold text-sm tracking-tight">${status.label}</span>
+                    </div>
+                    <span class="text-[11px] font-mono font-bold ${isActive ? 'text-brand-blue' : 'text-slate-400'} pl-7">${status.subtitle}</span>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        // Render transaction options list
+        function renderTradeActions() {
+            const container = document.getElementById("trade-actions-list-holder");
+            container.innerHTML = "";
+            TRANS_ACTIONS_DATA.forEach(action => {
+                const btn = document.createElement("button");
+                const isActive = activeAction === action.id;
+
+                btn.className = `p-4 rounded-xl border text-left flex flex-col gap-1 transition-all duration-250 ${
+                    isActive 
+                        ? 'border-brand-blue bg-blue-50/40 text-brand-textDark shadow-sm' 
+                        : 'border-slate-200 bg-white text-brand-textMuted hover:border-slate-400 hover:text-brand-textDark'
+                }`;
+                btn.onclick = () => {
+                    activeAction = action.id;
+                    renderTradeActions();
+                    updateAuditReport();
+                };
+
+                btn.innerHTML = `
+                    <span class="font-bold text-sm tracking-tight">${action.label}</span>
+                    <span class="text-[11px] text-brand-textMuted leading-snug">${action.desc}</span>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        // Render interactive Q&A helper buttons (Excludes Definitions from visual search chips to keep layout clean)
+        function renderQAChips() {
+            const container = document.getElementById("query-chips-tray");
+            container.innerHTML = "";
+            
+            // Render specific key questions as helper chips
+            const chipsData = QUESTION_DATABASE.filter(item => !item.id.endsWith("-definition") && !item.id.endsWith("-way-definition"));
+
+            // Auto-append key chips
+            const tradeReqChip = QUESTION_DATABASE.find(item => item.id === "public-trade-requests");
+            if (tradeReqChip && !chipsData.includes(tradeReqChip)) {
+                chipsData.unshift(tradeReqChip);
+            }
+
+            const missedGameChip = QUESTION_DATABASE.find(item => item.id === "missed-games-salary-deductions");
+            if (missedGameChip && !chipsData.includes(missedGameChip)) {
+                chipsData.unshift(missedGameChip);
+            }
+
+            chipsData.forEach(item => {
+                const btn = document.createElement("button");
+                btn.className = "bg-white hover:bg-blue-50/50 hover:border-brand-blue hover:text-brand-blue text-brand-textMuted border border-slate-200 px-3.5 py-2.5 rounded-full text-xs font-semibold tracking-tight transition-all duration-200 shadow-sm";
+                btn.textContent = item.question;
+                btn.onclick = () => {
+                    simulateCompute(item);
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        // Robust spell recognition helper matching terms on direct inputs
+        function handleSearchInput() {
+            const inputVal = document.getElementById("cba-search-input").value.toLowerCase().trim();
+            const assistantTray = document.getElementById("spell-check-assistant");
+            const suggestionNode = document.getElementById("suggested-correction-term");
+
+            if (inputVal.length < 3) {
+                assistantTray.classList.add("hidden");
+                return;
+            }
+
+            const matchFound = getFuzzyBestMatch(inputVal);
+
+            if (matchFound && matchFound.question.toLowerCase() !== inputVal) {
+                assistantTray.classList.remove("hidden");
+                suggestionNode.textContent = matchFound.question;
+                suggestionNode.dataset.matchedId = matchFound.id;
+            } else {
+                assistantTray.classList.add("hidden");
+            }
+        }
+
+        // Execute when user clicks on a correction suggestion
+        function applyCorrectionSuggestion() {
+            const matchedId = document.getElementById("suggested-correction-term").dataset.matchedId;
+            const targetItem = QUESTION_DATABASE.find(item => item.id === matchedId);
+            if (targetItem) {
+                simulateCompute(targetItem);
+                document.getElementById("cba-search-input").value = targetItem.question;
+                document.getElementById("spell-check-assistant").classList.add("hidden");
+            }
+        }
+
+        // Execute on direct search enter/click
+        function runActiveQuery() {
+            const inputVal = document.getElementById("cba-search-input").value.toLowerCase().trim();
+            if (inputVal.length < 2) return;
+
+            const matchedItem = getFuzzyBestMatch(inputVal);
+
+            if (matchedItem) {
+                simulateCompute(matchedItem);
+            } else {
+                const fallbackItem = {
+                    question: `Search: "${inputVal}"`,
+                    citation: "CBA DIRECTORY RESOURCES",
+                    answer: `<p class="text-sm text-slate-600 leading-relaxed">The term <strong>'${inputVal}'</strong> doesn't directly register as a standard glossary item in our indexes. Try searching for terms like <strong>missed practice fine</strong>, <strong>public trade request</strong>, <strong>firearms</strong>, <strong>sports betting equity</strong>, <strong>1/91.6 salary deduction</strong>, or <strong>cannabis endorsement</strong>.</p>`
+                };
+                simulateCompute(fallbackItem);
+            }
+            document.getElementById("spell-check-assistant").classList.add("hidden");
+        }
+
+        // Simulates realistic rule matching engine transitions
+        function simulateCompute(item) {
+            const resultBoard = document.getElementById("qa-result-board");
+            const loader = document.getElementById("oracle-computing-loader");
+            const responseContainer = document.getElementById("oracle-actual-response-container");
+            const loaderText = document.getElementById("oracle-computing-text");
+
+            resultBoard.classList.remove("hidden");
+            loader.classList.remove("hidden");
+            responseContainer.classList.add("hidden");
+
+            const loadingStates = [
+                "Analyzing user inquiry context...",
+                "Scanning 2026-27 CBA documentation database...",
+                "Retrieving verified Article III, IV, VI, and VII citations...",
+                "Formulating user-friendly response structure..."
+            ];
+
+            let stateIndex = 0;
+            loaderText.textContent = loadingStates[0];
+
+            const interval = setInterval(() => {
+                stateIndex++;
+                if (stateIndex < loadingStates.length) {
+                    loaderText.textContent = loadingStates[stateIndex];
+                } else {
+                    clearInterval(interval);
+                    loader.classList.add("hidden");
+                    responseContainer.classList.remove("hidden");
+
+                    document.getElementById("qa-citation-node").textContent = item.citation;
+                    document.getElementById("qa-active-question-node").textContent = item.question;
+                    document.getElementById("qa-active-answer-node").innerHTML = item.answer;
+
+                    // Trigger KaTeX rendering inside the newly loaded content
+                    if (window.renderMathInElement) {
+                        window.renderMathInElement(document.getElementById("qa-active-answer-node"), {
+                            delimiters: [{ left: '$$', right: '$$', display: true }]
+                        });
+                    }
+
+                    resultBoard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            }, 150);
+        }
+
+        function clearQABoard() {
+            document.getElementById("qa-result-board").classList.add("hidden");
+            document.getElementById("cba-search-input").value = "";
+            document.getElementById("spell-check-assistant").classList.add("hidden");
+        }
+
+        // Update validator output
+        function updateAuditReport() {
+            const statusObj = CAP_STATUSES_DATA.find(s => s.id === activeStatus);
+            const actionObj = TRANS_ACTIONS_DATA.find(a => a.id === activeAction);
+            const rule = VALIDATION_RULES_MATRIX[activeStatus][activeAction];
+
+            const banner = document.getElementById("verdict-banner-container");
+            const icon = document.getElementById("verdict-banner-icon");
+            const title = document.getElementById("verdict-banner-title");
+            const label = document.getElementById("verdict-summary-label");
+            const analysisBody = document.getElementById("verdict-analysis-body");
+
+            label.textContent = `${statusObj.label} • ${actionObj.label}`;
+            analysisBody.innerHTML = `<p class="font-medium text-slate-700">${rule.text}</p>`;
+
+            if (rule.allowed) {
+                title.textContent = "ALLOWED";
+                icon.textContent = "check_circle";
+                banner.className = "rounded-2xl p-8 border-2 flex flex-col items-center justify-center text-center space-y-3 transition-all duration-300 border-emerald-500/20 bg-emerald-500/5 text-emerald-600 shadow-sm";
+            } else {
+                title.textContent = "PROHIBITED";
+                icon.textContent = "cancel";
+                banner.className = "rounded-2xl p-8 border-2 flex flex-col items-center justify-center text-center space-y-3 transition-all duration-300 border-rose-500/20 bg-rose-500/5 text-rose-600 shadow-sm";
+            }
+        }
+    </script>
 </body>
 </html>
