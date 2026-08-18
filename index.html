@@ -232,11 +232,31 @@
         const input = document.getElementById('searchInput').value.toLowerCase().trim();
         const rules = document.getElementsByClassName('rule-item');
 
+        // If search input is cleared, reveal all cards
+        if (!input) {
+            for (let i = 0; i < rules.length; i++) {
+                rules[i].classList.remove('hidden');
+            }
+            return;
+        }
+
+        // Tokenize sentence into distinct search words (ignoring short filler words <= 2 letters)
+        const tokens = input.split(/\s+/).filter(word => word.length > 2);
+
         for (let i = 0; i < rules.length; i++) {
             const ruleText = rules[i].innerText.toLowerCase();
             const keywords = rules[i].getAttribute('data-keywords') || '';
             
-            if (ruleText.includes(input) || keywords.includes(input)) {
+            // Check if ANY token word matches the card's text or data-keywords
+            let matches = false;
+            for (let j = 0; j < tokens.length; j++) {
+                if (ruleText.includes(tokens[j]) || keywords.includes(tokens[j])) {
+                    matches = true;
+                    break;
+                }
+            }
+
+            if (matches) {
                 rules[i].classList.remove('hidden');
             } else {
                 rules[i].classList.add('hidden');
