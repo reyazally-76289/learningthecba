@@ -1634,26 +1634,37 @@
             });
         }
 
-        // Render interactive Q&A helper buttons (Excludes Definitions from visual search chips to keep layout clean)
+        // Render interactive Q&A helper buttons (Capped at 8 items)
         function renderQAChips() {
             const container = document.getElementById("query-chips-tray");
             container.innerHTML = "";
             
-            // Render specific key questions as helper chips
-            const chipsData = QUESTION_DATABASE.filter(item => !item.id.endsWith("-definition") && !item.id.endsWith("-way-definition"));
+            // Filter out definition items
+            let chipsData = QUESTION_DATABASE.filter(item => !item.id.endsWith("-definition") && !item.id.endsWith("-way-definition"));
 
-            // Auto-append key chips
-            const tradeReqChip = QUESTION_DATABASE.find(item => item.id === "public-trade-requests");
-            if (tradeReqChip && !chipsData.includes(tradeReqChip)) {
-                chipsData.unshift(tradeReqChip);
-            }
+            // Ensure key priority questions are included at the top
+            const priorityIds = ["missed-games-salary-deductions", "public-trade-requests", "second-apron", "sign-and-trade", "stepien-rule", "poison-pill", "mid-level-exception", "bird-rights"];
+            
+            // Build the prioritized list
+            let selectedChips = [];
+            
+            // First add available priority items
+            priorityIds.forEach(id => {
+                const item = QUESTION_DATABASE.find(q => q.id === id);
+                if (item && !selectedChips.some(c => c.id === item.id)) {
+                    selectedChips.push(item);
+                }
+            });
 
-            const missedGameChip = QUESTION_DATABASE.find(item => item.id === "missed-games-salary-deductions");
-            if (missedGameChip && !chipsData.includes(missedGameChip)) {
-                chipsData.unshift(missedGameChip);
-            }
-
+            // Fill remaining slots up to 8 from the rest of chipsData
             chipsData.forEach(item => {
+                if (selectedChips.length < 8 && !selectedChips.some(c => c.id === item.id)) {
+                    selectedChips.push(item);
+                }
+            });
+
+            // Render exactly up to 8 chips
+            selectedChips.slice(0, 8).forEach(item => {
                 const btn = document.createElement("button");
                 btn.className = "bg-white hover:bg-blue-50/50 hover:border-brand-blue hover:text-brand-blue text-brand-textMuted border border-slate-200 px-3.5 py-2.5 rounded-full text-xs font-semibold tracking-tight transition-all duration-200 shadow-sm";
                 btn.textContent = item.question;
