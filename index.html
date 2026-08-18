@@ -47,6 +47,7 @@
         }
         /* Premium minimalistic scrollbar styling */
         ::-webkit-scrollbar {
+            height: 6px;
             width: 6px;
         }
         ::-webkit-scrollbar-track {
@@ -59,6 +60,23 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #94A3B8;
         }
+
+        /* Iframe Zoom Container Rules with Header Clipping */
+        .sheet-viewport-box {
+            overflow: hidden;
+            position: relative;
+            height: 720px;
+        }
+        .sheet-zoom-wrapper {
+            width: 117.6%; /* Offsets 0.85 scale to prevent side clipping */
+            transform-origin: top left;
+            transition: transform 0.2s ease, width 0.2s ease;
+            margin-top: -38px; /* Perfectly crops out the Google Sheets top title bar */
+        }
+        .zoom-scale-85 { transform: scale(0.85); width: 117.6%; }
+        .zoom-scale-90 { transform: scale(0.90); width: 111.1%; }
+        .zoom-scale-100 { transform: scale(1.00); width: 100%; }
+        .zoom-scale-110 { transform: scale(1.10); width: 90.9%; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between antialiased selection:bg-blue-100 selection:text-brand-blue">
@@ -82,9 +100,10 @@
             <nav class="flex items-center gap-6 text-sm font-semibold text-brand-textMuted">
                 <a href="#qa-section" class="hover:text-brand-blue transition-colors">Rule Finder</a>
                 <a href="#validator-section" class="hover:text-brand-blue transition-colors">Rule Validator</a>
+                <a href="#roster-section" class="hover:text-brand-blue transition-colors">Live Rosters</a>
                 <a href="#resources-section" class="hover:text-brand-blue transition-colors">CBA Sources</a>
                 <span class="text-slate-300">|</span>
-                <span class="text-[12px] bg-slate-100 text-brand-textDark px-2.5 py-1 rounded-md font-mono font-bold select-none">Community Hub v4.3</span>
+                <span class="text-[12px] bg-slate-100 text-brand-textDark px-2.5 py-1 rounded-md font-mono font-bold select-none">Community Hub v4.6</span>
             </nav>
         </div>
     </header>
@@ -213,7 +232,7 @@
             </div>
 
             <!-- Active Q&A Output Board -->
-            <div id="qa-result-board" class="border border-brand-border rounded-2xl p-6 bg-slate-50/50 hidden space-y-4 transition-all duration-300">
+            <div id="qa-result-board" class="border border-brand-border rounded-2xl p-6 bg-slate-50/50 hidden space-y-4 transition-all duration-200">
                 <div class="flex items-center justify-between border-b border-brand-border pb-3">
                     <div class="flex items-center gap-2">
                         <span class="inline-flex w-2.5 h-2.5 rounded-full bg-brand-blue"></span>
@@ -222,12 +241,6 @@
                     <button onclick="clearQABoard()" class="text-brand-textMuted hover:text-brand-textDark flex items-center justify-center p-1 rounded-lg hover:bg-slate-100 transition-all">
                         <span class="material-icons text-lg">close</span>
                     </button>
-                </div>
-
-                <!-- Loading screen mockup -->
-                <div id="oracle-computing-loader" class="hidden flex items-center gap-3 py-6 text-brand-textMuted text-xs font-mono">
-                    <div class="w-4 h-4 border-2 border-brand-blue border-t-transparent rounded-full animate-spin"></div>
-                    <span id="oracle-computing-text">Scanning salary cap framework rules...</span>
                 </div>
 
                 <div id="oracle-actual-response-container" class="space-y-4">
@@ -291,7 +304,7 @@
                         <span class="text-[10px] font-extrabold text-brand-textMuted uppercase tracking-widest block">Audit Report</span>
                         
                         <!-- Premium Allowed / Prohibited Block -->
-                        <div id="verdict-banner-container" class="rounded-2xl p-8 border-2 flex flex-col items-center justify-center text-center space-y-4 transition-all duration-300">
+                        <div id="verdict-banner-container" class="rounded-2xl p-8 border-2 flex flex-col items-center justify-center text-center space-y-4 transition-all duration-200">
                             <span class="material-icons text-6xl" id="verdict-banner-icon">check_circle</span>
                             <h4 class="text-4xl font-black tracking-tight" id="verdict-banner-title">ALLOWED</h4>
                             <div class="w-full h-px bg-slate-100 my-2"></div>
@@ -314,6 +327,60 @@
                             Note: Evaluations represent standard rules and do not account for trade moratorium parameters.
                         </p>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Roster Directory (Google Sheet Embed with Team Color Tabs & Zoom Controls) -->
+        <section id="roster-section" class="bg-white border border-brand-border rounded-3xl p-6 sm:p-8 space-y-6 shadow-sm">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <span class="material-icons text-brand-blue">table_chart</span>
+                        <span class="text-xs font-bold text-brand-blue uppercase tracking-widest block font-mono">Live Sync & Roster Matrix</span>
+                    </div>
+                    <h3 class="text-2xl sm:text-3xl font-black text-brand-textDark tracking-tight">
+                        Live NBA Roster & Contract Directory
+                    </h3>
+                </div>
+
+                <!-- Custom Zoom Scale Controls -->
+                <div class="flex items-center gap-2 bg-slate-100 p-1.5 rounded-xl self-start sm:self-auto border border-slate-200">
+                    <span class="material-icons text-slate-500 text-sm pl-2">zoom_in</span>
+                    <span class="text-[11px] font-bold text-slate-600 uppercase pr-1">Sheet View:</span>
+                    <button onclick="setSheetZoom('85')" id="zoom-btn-85" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-brand-blue text-white shadow-sm transition-all">85%</button>
+                    <button onclick="setSheetZoom('90')" id="zoom-btn-90" class="px-2.5 py-1 text-xs font-bold rounded-lg text-slate-600 hover:bg-slate-200 transition-all">90%</button>
+                    <button onclick="setSheetZoom('100')" id="zoom-btn-100" class="px-2.5 py-1 text-xs font-bold rounded-lg text-slate-600 hover:bg-slate-200 transition-all">100%</button>
+                    <button onclick="setSheetZoom('110')" id="zoom-btn-110" class="px-2.5 py-1 text-xs font-bold rounded-lg text-slate-600 hover:bg-slate-200 transition-all">110%</button>
+                </div>
+            </div>
+
+            <p class="text-brand-textMuted text-sm max-w-3xl">
+                Select any NBA franchise tab below to highlight team roster books. The sheet below is automatically scaled to 85% to give you a full macro view of salaries, cap holds, and team option details.
+            </p>
+
+            <!-- 30 NBA Teams Color Badge Selector Bar -->
+            <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] font-extrabold text-brand-textMuted uppercase tracking-wider block font-mono">Franchise Directory Tabs (Official Team Palette)</span>
+                    <span class="text-[10px] text-slate-400 italic">Scroll horizontally &rarr;</span>
+                </div>
+                <div class="flex items-center gap-2 overflow-x-auto pb-3 pt-1 scrollbar-thin scrollbar-thumb-slate-300" id="nba-team-tabs-container">
+                    <!-- Populated dynamically with official NBA team colors -->
+                </div>
+            </div>
+
+            <!-- Embedded Google Sheet Iframe Viewport Container -->
+            <div class="border border-slate-200 rounded-2xl shadow-inner bg-slate-900/5 sheet-viewport-box">
+                <div id="sheet-zoom-container" class="sheet-zoom-wrapper zoom-scale-85">
+                    <iframe 
+                        id="nba-live-sheet-iframe"
+                        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQO4UOvNfI1PoOrzZDfEbTOWukZxqX-iOHsUMObp47OExIVOsGa-27Nxtzdln32Kw/pubhtml?gid=954673918&amp;single=true&amp;widget=false&amp;headers=false&amp;chrome=false"
+                        width="100%" 
+                        height="780px" 
+                        style="border: 0; min-height: 750px;" 
+                        allowfullscreen>
+                    </iframe>
                 </div>
             </div>
         </section>
@@ -512,8 +579,151 @@
     </footer>
 
     <script>
-        // High-fidelity database of rule answers mapping directly to NBA CBA topics, incorporating deep Article details.
-        // Every article is structurally designated and meticulously paraphrased.
+        // Official primary & secondary color palettes for all 30 NBA Teams
+        const NBA_TEAMS_PALETTE = [
+            { code: "ATL", name: "Hawks", primary: "#C8102E", secondary: "#FDB927", text: "#FFFFFF" },
+            { code: "BOS", name: "Celtics", primary: "#007A33", secondary: "#BA9653", text: "#FFFFFF" },
+            { code: "BKN", name: "Nets", primary: "#000000", secondary: "#FFFFFF", text: "#FFFFFF" },
+            { code: "CHA", name: "Hornets", primary: "#1D1160", secondary: "#00788C", text: "#FFFFFF" },
+            { code: "CHI", name: "Bulls", primary: "#CE1141", secondary: "#000000", text: "#FFFFFF" },
+            { code: "CLE", name: "Cavaliers", primary: "#860038", secondary: "#FDBB30", text: "#FFFFFF" },
+            { code: "DAL", name: "Mavericks", primary: "#00538C", secondary: "#0064B1", text: "#FFFFFF" },
+            { code: "DEN", name: "Nuggets", primary: "#0E2240", secondary: "#FEC524", text: "#FFFFFF" },
+            { code: "DET", name: "Pistons", primary: "#C8102E", secondary: "#1D428A", text: "#FFFFFF" },
+            { code: "GSW", name: "Warriors", primary: "#1D428A", secondary: "#FFC72C", text: "#FFFFFF" },
+            { code: "HOU", name: "Rockets", primary: "#CE1141", secondary: "#000000", text: "#FFFFFF" },
+            { code: "IND", name: "Pacers", primary: "#002D62", secondary: "#FDBB30", text: "#FFFFFF" },
+            { code: "LAC", name: "Clippers", primary: "#C8102E", secondary: "#1D428A", text: "#FFFFFF" },
+            { code: "LAL", name: "Lakers", primary: "#552583", secondary: "#FDB927", text: "#FFFFFF" },
+            { code: "MEM", name: "Grizzlies", primary: "#5D76A9", secondary: "#12173F", text: "#FFFFFF" },
+            { code: "MIA", name: "Heat", primary: "#98002E", secondary: "#F9A01B", text: "#FFFFFF" },
+            { code: "MIL", name: "Bucks", primary: "#00471B", secondary: "#EEE1C6", text: "#FFFFFF" },
+            { code: "MIN", name: "Timberwolves", primary: "#0C2340", secondary: "#236192", text: "#FFFFFF" },
+            { code: "NOP", name: "Pelicans", primary: "#0C2340", secondary: "#C8102E", text: "#FFFFFF" },
+            { code: "NYK", name: "Knicks", primary: "#006BB6", secondary: "#F58426", text: "#FFFFFF" },
+            { code: "OKC", name: "Thunder", primary: "#007AC1", secondary: "#EF3B24", text: "#FFFFFF" },
+            { code: "ORL", name: "Magic", primary: "#0077C0", secondary: "#C4CED4", text: "#FFFFFF" },
+            { code: "PHI", name: "76ers", primary: "#006BB6", secondary: "#ED174C", text: "#FFFFFF" },
+            { code: "PHX", name: "Suns", primary: "#1D1160", secondary: "#E56020", text: "#FFFFFF" },
+            { code: "POR", name: "Trail Blazers", primary: "#E03A3E", secondary: "#000000", text: "#FFFFFF" },
+            { code: "SAC", name: "Kings", primary: "#5A2D81", secondary: "#63666A", text: "#FFFFFF" },
+            { code: "SAS", name: "Spurs", primary: "#C4CED4", secondary: "#000000", text: "#000000" },
+            { code: "TOR", name: "Raptors", primary: "#CE1141", secondary: "#000000", text: "#FFFFFF" },
+            { code: "UTA", name: "Jazz", primary: "#002B5C", secondary: "#F9A01B", text: "#FFFFFF" },
+            { code: "WAS", name: "Wizards", primary: "#002B5C", secondary: "#E31837", text: "#FFFFFF" }
+        ];
+
+        // Active Team State default set to ATL (Hawks)
+        let selectedTeamCode = "ATL";
+
+        // Google Sheet Publish ID & Team Tab GID Mappings
+        const PUBLISHED_ID = "2PACX-1vQO4UOvNfI1PoOrzZDfEbTOWukZxqX-iOHsUMObp47OExIVOsGa-27Nxtzdln32Kw";
+        const TEAM_GIDS = {
+            "ATL": "954673918",
+            "BOS": "377855472",
+            "BKN": "1748393781",
+            "CHA": "1560685879",
+            "CHI": "625694529",
+            "CLE": "1953680741",
+            "DAL": "941164177",
+            "DEN": "522174037",
+            "DET": "582900895",
+            "GSW": "243661232",
+            "HOU": "810528466",
+            "IND": "1236990569",
+            "LAC": "1198869070",
+            "LAL": "1978428320",
+            "MEM": "868554757",
+            "MIA": "475053296",
+            "MIL": "1358028340",
+            "MIN": "617820852",
+            "NOP": "1170818904",
+            "NYK": "1548857099",
+            "OKC": "186809129",
+            "ORL": "1110183108",
+            "PHI": "2129768762",
+            "PHX": "1053328598",
+            "POR": "1917962395",
+            "SAC": "556677448",
+            "SAS": "1494977961",
+            "TOR": "1687069278",
+            "UTA": "724760998",
+            "WAS": "824717598"
+        };
+
+        // Render 30 NBA Team Tabs
+        function renderNBATeamTabs() {
+            const container = document.getElementById("nba-team-tabs-container");
+            if (!container) return;
+
+            container.innerHTML = "";
+
+            // Non-pressable "League Master" static label badge
+            const masterTag = document.createElement("div");
+            masterTag.className = "px-3.5 py-2 rounded-xl text-xs font-black uppercase tracking-wider bg-slate-100 text-slate-700 border border-slate-200 flex items-center gap-1.5 shrink-0 shadow-sm cursor-default select-none";
+            masterTag.innerHTML = `
+                <span class="material-icons text-sm text-slate-500">groups</span>
+                <span>League Master</span>
+            `;
+            container.appendChild(masterTag);
+
+            // Populate each of the 30 franchises
+            NBA_TEAMS_PALETTE.forEach(team => {
+                const isActive = selectedTeamCode === team.code;
+                const btn = document.createElement("button");
+                btn.className = `px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 border shadow-sm ${
+                    isActive ? 'ring-4 ring-offset-2 ring-brand-blue font-extrabold scale-105' : 'hover:scale-105 opacity-90 hover:opacity-100'
+                }`;
+                
+                // Primary brand background with secondary accent border
+                btn.style.backgroundColor = team.primary;
+                btn.style.color = team.text;
+                btn.style.borderColor = team.secondary;
+
+                btn.onclick = () => selectTeamTab(team.code);
+
+                btn.innerHTML = `
+                    <span class="w-2.5 h-2.5 rounded-full inline-block shadow-inner" style="background-color: ${team.secondary}; border: 1px solid rgba(0,0,0,0.2);"></span>
+                    <span>${team.code}</span>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        function selectTeamTab(code) {
+            selectedTeamCode = code;
+            renderNBATeamTabs();
+            
+            const iframe = document.getElementById("nba-live-sheet-iframe");
+            if (iframe) {
+                // Grab the correct gid for the team clicked, default to ATL
+                const gid = TEAM_GIDS[code] || "954673918";
+                iframe.src = `https://docs.google.com/spreadsheets/d/e/${PUBLISHED_ID}/pubhtml?gid=${gid}&single=true&widget=false&headers=false&chrome=false`;
+            }
+        }
+
+        // Adjust Zoom Level Controls
+        function setSheetZoom(zoomPercent) {
+            const zoomWrapper = document.getElementById("sheet-zoom-container");
+            if (!zoomWrapper) return;
+
+            // Reset classes
+            zoomWrapper.className = "sheet-zoom-wrapper zoom-scale-" + zoomPercent;
+
+            // Update button styles
+            ["85", "90", "100", "110"].forEach(lvl => {
+                const btn = document.getElementById(`zoom-btn-${lvl}`);
+                if (btn) {
+                    if (lvl === zoomPercent) {
+                        btn.className = "px-2.5 py-1 text-xs font-bold rounded-lg bg-brand-blue text-white shadow-sm transition-all";
+                    } else {
+                        btn.className = "px-2.5 py-1 text-xs font-bold rounded-lg text-slate-600 hover:bg-slate-200 transition-all";
+                    }
+                }
+            });
+        }
+
+        // High-fidelity database of rule answers mapping directly to NBA CBA topics
         const QUESTION_DATABASE = [
             {
                 id: "bri-definition",
@@ -764,7 +974,7 @@
                 answer: `
                     <p>A player's maximum starting salary is strictly regulated based on their accrued **Years of Service** as a percentage of the total Salary Cap in effect during the contract's execution:</p>
                     <ul class="list-disc pl-5 mt-2 space-y-1.5">
-                        <li><strong>Tier 1 (&lt; 7 Years of Service):</strong> Capped at the greater of <strong>25% of the Salary Cap</strong>, or 105% of the salary of the final season of the player's prior contract.</li>
+                        <li><strong>Tier 1 (< 7 Years of Service):</strong> Capped at the greater of <strong>25% of the Salary Cap</strong>, or 105% of the salary of the final season of the player's prior contract.</li>
                         <li><strong>Tier 2 (7 to 9 Years of Service):</strong> Capped at the greater of <strong>30% of the Salary Cap</strong>, or 105% of the final year salary of the player's prior contract.</li>
                         <li><strong>Tier 3 (10+ Years of Service):</strong> Capped at the greater of <strong>35% of the Salary Cap</strong>, or 105% of the final year salary of the player's prior contract.</li>
                         <li><strong>Extension Amendment Mechanics (The Safety Net):</strong> If the first year of an extension starts and exceeds the maximum tier cap due to cap fluctuations, the salary is immediately deemed amended down. The reduction applies in order: (1) Signing bonus allocation, (2) Likely/Unlikely performance bonuses (pro-rata), (3) Base Compensation. Subsequent years are adjusted downward proportionally.</li>
@@ -1066,12 +1276,12 @@
                             <strong class="text-slate-800 text-xs uppercase tracking-wider block">(h) The Minimum Player Salary Reimbursement Benefit</strong>
                             <p class="text-xs text-slate-600">To prevent teams from discriminating against experienced veterans in favor of cheaper rookies, the league maintains a centralized fund. When a team signs a player with <strong>3 or more Years of Service</strong> to a 1-year, 10-day, or Rest-of-Season minimum contract, the team is reimbursed for the difference:</p>
                             <p class="text-xs font-mono text-brand-blue mt-1">$$\\text{Reimbursement Fund Payout} = \\text{Minimum Salary}_{\\text{YOS} \\ge 3} - \\text{Minimum Salary}_{\\text{YOS} = 2}$$</p>
-                            <p class="text-xs text-slate-600 mt-1">The player receives their full scale minimum, but the team's salary cap ledger and actual cash payout only count at the cheaper **2-Year Service minimum** ($2,431,617$ pro-rata in 2026-27). The rest is paid back from the League-wide fund at the end of the season.</p>
+                            <p class="text-xs text-slate-600 mt-1">The player receives their full scale minimum, but the team's salary cap ledger and actual cash payout only count at the cheaper <strong>2-Year Service minimum</strong> ($2,431,617$ pro-rata in 2026-27). The rest is paid back from the League-wide fund at the end of the season.</p>
                         </div>
 
                         <div class="border-l-2 border-brand-blue pl-3">
                             <strong class="text-slate-800 text-xs uppercase tracking-wider block">(i) NBA Players Legacy Fund</strong>
-                            <p class="text-xs text-slate-600">Provides continuous support for retired players. The league covers exactly **one-half of the annual $1.5 million funding** ($750,000/yr) of the joint NBA/NBPA Legacy Fund.</p>
+                            <p class="text-xs text-slate-600">Provides continuous support for retired players. The league covers exactly <strong>one-half of the annual $1.5 million funding</strong> ($750,000/yr) of the joint NBA/NBPA Legacy Fund.</p>
                         </div>
 
                         <div class="border-l-2 border-brand-blue pl-3">
@@ -1086,7 +1296,6 @@
                     </div>
                 `
             },
-            /* --- ARTICLE VI: PLAYER CONDUCT ADDITIONS --- */
             {
                 id: "missed-games-salary-deductions",
                 article: "Article VI",
@@ -1217,7 +1426,6 @@
                     </ul>
                 `
             },
-            /* --- END ARTICLE VI ADDITIONS --- */
             {
                 id: "poison-pill",
                 article: "Article VII",
@@ -1357,7 +1565,7 @@
             return tmp[b.length][a.length];
         }
 
-        // Resolves user keywords using edit distance to tolerate typos and human errors
+        // Resolves user keywords using edit distance
         function getFuzzyBestMatch(inputQuery) {
             const queryClean = inputQuery.toLowerCase().trim();
             if (queryClean.length < 2) return null;
@@ -1446,7 +1654,7 @@
         // Interactive UI state trackers
         let activeStatus = "under-cap";
         let activeAction = "aggregate";
-        const openedFolders = new Set(); // Start with all folders folded (collapsed) by default
+        const openedFolders = new Set();
 
         // Handles QA Section Tab Changes
         function switchQATab(tab) {
@@ -1467,12 +1675,11 @@
 
                 glossaryBtn.className = "py-3 px-4 text-xs sm:text-sm font-bold text-brand-blue border-b-2 border-brand-blue -mb-px transition-all flex items-center gap-1.5";
                 searchBtn.className = "py-3 px-4 text-xs sm:text-sm font-semibold text-brand-textMuted border-b-2 border-transparent -mb-px hover:text-brand-textDark transition-all flex items-center gap-1.5";
-                openedFolders.clear(); // Fold all articles when clicking the tab
+                openedFolders.clear();
                 renderGlossaryFolders();
             }
         }
 
-        // Toggles folder visibility in the directory UI
         function toggleFolder(articleId) {
             if (openedFolders.has(articleId)) {
                 openedFolders.delete(articleId);
@@ -1482,12 +1689,10 @@
             renderGlossaryFolders();
         }
 
-        // Dynamically populates the directory system with structured folders
         function renderGlossaryFolders() {
             const stack = document.getElementById("glossary-folders-stack");
             stack.innerHTML = "";
 
-            // Group our definitions into designated structural folders chronologically
             const articles = [
                 { id: "Article I", title: "Article I: General Definitions & Revenue", desc: "Core baseline terminologies, BRI splits, and service metrics." },
                 { id: "Article II", title: "Article II: Roster Regulations, UPC, & Exhibits", desc: "Contract amendments, allowable guarantees, Exhibit 9 & 10 rules." },
@@ -1505,7 +1710,6 @@
                 const folderWrapper = document.createElement("div");
                 folderWrapper.className = "border border-slate-200 rounded-2xl bg-white shadow-sm overflow-hidden transition-all";
 
-                // Folder Header
                 const folderHeader = document.createElement("button");
                 folderHeader.onclick = () => toggleFolder(art.id);
                 folderHeader.className = "w-full p-4 flex items-center justify-between text-left bg-slate-50/50 hover:bg-slate-50 transition-all border-b border-transparent";
@@ -1530,7 +1734,6 @@
                     </div>
                 `;
 
-                // Sub-items Grid Inside Folder
                 const folderContent = document.createElement("div");
                 folderContent.className = isExpanded ? "p-4 bg-white block" : "hidden";
 
@@ -1545,7 +1748,7 @@
                             const card = document.createElement("button");
                             card.className = "p-4 rounded-xl border border-slate-200 bg-slate-50/40 text-left hover:border-brand-blue hover:bg-blue-50/10 transition-all duration-200 flex flex-col justify-between h-36 group shadow-sm";
                             card.onclick = () => {
-                                simulateCompute(item);
+                                displayRuleDirectly(item);
                             };
 
                             card.innerHTML = `
@@ -1574,10 +1777,10 @@
             renderCapTiers();
             renderTradeActions();
             renderQAChips();
+            renderNBATeamTabs();
             updateAuditReport();
         };
 
-        // Render cap position buttons
         function renderCapTiers() {
             const container = document.getElementById("cap-status-options-grid");
             container.innerHTML = "";
@@ -1607,7 +1810,6 @@
             });
         }
 
-        // Render transaction options list
         function renderTradeActions() {
             const container = document.getElementById("trade-actions-list-holder");
             container.innerHTML = "";
@@ -1634,21 +1836,14 @@
             });
         }
 
-        // Render interactive Q&A helper buttons (Capped at 8 items)
         function renderQAChips() {
             const container = document.getElementById("query-chips-tray");
             container.innerHTML = "";
             
-            // Filter out definition items
             let chipsData = QUESTION_DATABASE.filter(item => !item.id.endsWith("-definition") && !item.id.endsWith("-way-definition"));
-
-            // Ensure key priority questions are included at the top
             const priorityIds = ["missed-games-salary-deductions", "public-trade-requests", "second-apron", "sign-and-trade", "stepien-rule", "poison-pill", "mid-level-exception", "bird-rights"];
             
-            // Build the prioritized list
             let selectedChips = [];
-            
-            // First add available priority items
             priorityIds.forEach(id => {
                 const item = QUESTION_DATABASE.find(q => q.id === id);
                 if (item && !selectedChips.some(c => c.id === item.id)) {
@@ -1656,26 +1851,23 @@
                 }
             });
 
-            // Fill remaining slots up to 8 from the rest of chipsData
             chipsData.forEach(item => {
                 if (selectedChips.length < 8 && !selectedChips.some(c => c.id === item.id)) {
                     selectedChips.push(item);
                 }
             });
 
-            // Render exactly up to 8 chips
             selectedChips.slice(0, 8).forEach(item => {
                 const btn = document.createElement("button");
                 btn.className = "bg-white hover:bg-blue-50/50 hover:border-brand-blue hover:text-brand-blue text-brand-textMuted border border-slate-200 px-3.5 py-2.5 rounded-full text-xs font-semibold tracking-tight transition-all duration-200 shadow-sm";
                 btn.textContent = item.question;
                 btn.onclick = () => {
-                    simulateCompute(item);
+                    displayRuleDirectly(item);
                 };
                 container.appendChild(btn);
             });
         }
 
-        // Robust spell recognition helper matching terms on direct inputs
         function handleSearchInput() {
             const inputVal = document.getElementById("cba-search-input").value.toLowerCase().trim();
             const assistantTray = document.getElementById("spell-check-assistant");
@@ -1697,18 +1889,16 @@
             }
         }
 
-        // Execute when user clicks on a correction suggestion
         function applyCorrectionSuggestion() {
             const matchedId = document.getElementById("suggested-correction-term").dataset.matchedId;
             const targetItem = QUESTION_DATABASE.find(item => item.id === matchedId);
             if (targetItem) {
-                simulateCompute(targetItem);
+                displayRuleDirectly(targetItem);
                 document.getElementById("cba-search-input").value = targetItem.question;
                 document.getElementById("spell-check-assistant").classList.add("hidden");
             }
         }
 
-        // Execute on direct search enter/click
         function runActiveQuery() {
             const inputVal = document.getElementById("cba-search-input").value.toLowerCase().trim();
             if (inputVal.length < 2) return;
@@ -1716,62 +1906,34 @@
             const matchedItem = getFuzzyBestMatch(inputVal);
 
             if (matchedItem) {
-                simulateCompute(matchedItem);
+                displayRuleDirectly(matchedItem);
             } else {
                 const fallbackItem = {
                     question: `Search: "${inputVal}"`,
                     citation: "CBA DIRECTORY RESOURCES",
                     answer: `<p class="text-sm text-slate-600 leading-relaxed">The term <strong>'${inputVal}'</strong> doesn't directly register as a standard glossary item in our indexes. Try searching for terms like <strong>missed practice fine</strong>, <strong>public trade request</strong>, <strong>firearms</strong>, <strong>sports betting equity</strong>, <strong>1/91.6 salary deduction</strong>, or <strong>cannabis endorsement</strong>.</p>`
                 };
-                simulateCompute(fallbackItem);
+                displayRuleDirectly(fallbackItem);
             }
             document.getElementById("spell-check-assistant").classList.add("hidden");
         }
 
-        // Simulates realistic rule matching engine transitions
-        function simulateCompute(item) {
+        // Instant rendering with zero simulated delay
+        function displayRuleDirectly(item) {
             const resultBoard = document.getElementById("qa-result-board");
-            const loader = document.getElementById("oracle-computing-loader");
-            const responseContainer = document.getElementById("oracle-actual-response-container");
-            const loaderText = document.getElementById("oracle-computing-text");
-
             resultBoard.classList.remove("hidden");
-            loader.classList.remove("hidden");
-            responseContainer.classList.add("hidden");
 
-            const loadingStates = [
-                "Analyzing user inquiry context...",
-                "Scanning 2026-27 CBA documentation database...",
-                "Retrieving verified Article III, IV, VI, and VII citations...",
-                "Formulating user-friendly response structure..."
-            ];
+            document.getElementById("qa-citation-node").textContent = item.citation;
+            document.getElementById("qa-active-question-node").textContent = item.question;
+            document.getElementById("qa-active-answer-node").innerHTML = item.answer;
 
-            let stateIndex = 0;
-            loaderText.textContent = loadingStates[0];
+            if (window.renderMathInElement) {
+                window.renderMathInElement(document.getElementById("qa-active-answer-node"), {
+                    delimiters: [{ left: '$$', right: '$$', display: true }]
+                });
+            }
 
-            const interval = setInterval(() => {
-                stateIndex++;
-                if (stateIndex < loadingStates.length) {
-                    loaderText.textContent = loadingStates[stateIndex];
-                } else {
-                    clearInterval(interval);
-                    loader.classList.add("hidden");
-                    responseContainer.classList.remove("hidden");
-
-                    document.getElementById("qa-citation-node").textContent = item.citation;
-                    document.getElementById("qa-active-question-node").textContent = item.question;
-                    document.getElementById("qa-active-answer-node").innerHTML = item.answer;
-
-                    // Trigger KaTeX rendering inside the newly loaded content
-                    if (window.renderMathInElement) {
-                        window.renderMathInElement(document.getElementById("qa-active-answer-node"), {
-                            delimiters: [{ left: '$$', right: '$$', display: true }]
-                        });
-                    }
-
-                    resultBoard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }
-            }, 150);
+            resultBoard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
         function clearQABoard() {
@@ -1780,7 +1942,6 @@
             document.getElementById("spell-check-assistant").classList.add("hidden");
         }
 
-        // Update validator output
         function updateAuditReport() {
             const statusObj = CAP_STATUSES_DATA.find(s => s.id === activeStatus);
             const actionObj = TRANS_ACTIONS_DATA.find(a => a.id === activeAction);
@@ -1798,11 +1959,11 @@
             if (rule.allowed) {
                 title.textContent = "ALLOWED";
                 icon.textContent = "check_circle";
-                banner.className = "rounded-2xl p-8 border-2 flex flex-col items-center justify-center text-center space-y-3 transition-all duration-300 border-emerald-500/20 bg-emerald-500/5 text-emerald-600 shadow-sm";
+                banner.className = "rounded-2xl p-8 border-2 flex flex-col items-center justify-center text-center space-y-3 transition-all duration-200 border-emerald-500/20 bg-emerald-500/5 text-emerald-600 shadow-sm";
             } else {
                 title.textContent = "PROHIBITED";
                 icon.textContent = "cancel";
-                banner.className = "rounded-2xl p-8 border-2 flex flex-col items-center justify-center text-center space-y-3 transition-all duration-300 border-rose-500/20 bg-rose-500/5 text-rose-600 shadow-sm";
+                banner.className = "rounded-2xl p-8 border-2 flex flex-col items-center justify-center text-center space-y-3 transition-all duration-200 border-rose-500/20 bg-rose-500/5 text-rose-600 shadow-sm";
             }
         }
     </script>
